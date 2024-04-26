@@ -1,0 +1,30 @@
+{{- template "base" .}}
+{{- define "main"}}
+    <section>
+        <h1>{{.Heading}}</h1>
+
+        <p>Ask a question about current events.</p>
+
+        <form action="/" method="post">
+            <fieldset>
+                <label>
+                    {{.Label}}
+                    <input type="text" name="query">
+                </label>
+                <button type="submit">Ask</button>
+            </fieldset>
+        </form>
+    </section>
+    {{if .Query }}
+        <section>
+            <h2>Question</h2>
+            <p>{{.Query}}</p>
+        </section>
+    {{end}}
+    {{if .Response }}
+        <section>
+            <h2>Answer</h2>
+            <p>{{.Response}}</p>
+        </section>
+    {{end}}
+{{- end}}
