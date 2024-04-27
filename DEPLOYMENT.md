@@ -37,7 +37,7 @@
 1.  Set the workload identity pool ID from the output of the last command.
 
     ```shell
-    export WORKLOAD_IDENTITY_POOL_ID={from previous command output}
+    export WORKLOAD_IDENTITY_POOL_ID={previous command output}
     ```
 
 1.  Create a workload identity pool provider.
@@ -87,6 +87,6 @@ Repository variables for pipeline
 
 ```shell
 GCP_PROJECT_ID=${PROJECT_ID}
-GCP_WORKLOAD_IDENTITY_POOL_ID=${WORKLOAD_IDENTITY_POOL_ID}
+GCP_WORKLOAD_IDENTITY_POOL_ID=${WORKLOAD_IDENTITY_POOL_ID}/providers/github-provider
 GCP_SERVICE_ACCOUNT=github-service-account@${PROJECT_ID}.iam.gserviceaccount.com
 ```
