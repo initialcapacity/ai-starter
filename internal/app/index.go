@@ -1,7 +1,6 @@
 package app
 
 import (
-	"context"
 	"github.com/Azure/azure-sdk-for-go/sdk/ai/azopenai"
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/to"
 	"github.com/initialcapacity/ai-starter/pkg/websupport"
@@ -36,7 +35,7 @@ func Query(client *azopenai.Client) http.HandlerFunc {
 
 		query := r.Form.Get("query")
 
-		chatResponse, err := client.GetChatCompletions(context.Background(), azopenai.ChatCompletionsOptions{
+		chatResponse, err := client.GetChatCompletions(r.Context(), azopenai.ChatCompletionsOptions{
 			Messages: []azopenai.ChatRequestMessageClassification{
 				&azopenai.ChatRequestSystemMessage{Content: to.Ptr("You are a reporter for a major world newspaper.")},
 				&azopenai.ChatRequestSystemMessage{Content: to.Ptr("Write your response as if you were writing a short, high-quality news article for your paper. Limit your response to one paragraph.")},
