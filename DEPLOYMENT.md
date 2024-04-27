@@ -17,6 +17,8 @@
      run.googleapis.com \
      cloudbuild.googleapis.com \
      artifactregistry.googleapis.com \
+     cloudfunctions.googleapis.com \
+     eventarc.googleapis.com \
      --project "${PROJECT_ID}"
     gcloud iam service-accounts create github-service-account --project "${PROJECT_ID}"
     ```
@@ -69,6 +71,8 @@
     gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:github-service-account@${PROJECT_ID}.iam.gserviceaccount.com" \
         --role="roles/run.admin"
     gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:github-service-account@${PROJECT_ID}.iam.gserviceaccount.com" \
+        --role="roles/cloudfunctions.admin"
+    gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:github-service-account@${PROJECT_ID}.iam.gserviceaccount.com" \
         --role="roles/viewer"
     gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:github-service-account@${PROJECT_ID}.iam.gserviceaccount.com" \
         --role="roles/iam.serviceAccountUser"
@@ -82,7 +86,14 @@
         --format='table(bindings.role)' \
         --filter="bindings.members:github-service-account@${PROJECT_ID}.iam.gserviceaccount.com"
     ```
-    
+
+
+1.  Create topics
+    ```shell
+    gcloud pubsub topics create collector
+    gcloud pubsub topics create analyzer
+    ``` 
+
 Repository variables for pipeline
 
 ```shell
