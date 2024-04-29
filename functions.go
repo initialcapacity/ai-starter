@@ -10,7 +10,6 @@ import (
 	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
 	"github.com/initialcapacity/ai-starter/pkg/feedsupport"
 	"github.com/initialcapacity/ai-starter/pkg/websupport"
-	_ "github.com/lib/pq"
 	"github.com/tiktoken-go/tokenizer"
 	"net/http"
 	"strings"
