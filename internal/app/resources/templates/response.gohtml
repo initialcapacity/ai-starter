@@ -23,7 +23,7 @@
 
     <section>
         <h2>Answer</h2>
-        <p class="source"><a href="{{.Source}}">{{.Source}}</a></p>
+        <p class="source"><a href="{{.Source}}" target="_blank">{{.Source}}</a></p>
 
         {{ $response := .Response.GetAll }}
         <p>{{range $part := $response}}{{$part}}{{end}}</p>
