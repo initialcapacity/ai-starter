@@ -1,18 +1,31 @@
 {{- template "base" .}}
 {{- define "main"}}
     <section>
-        <h1>What would you like to know?</h1>
+        <h1>What else would you like to know?</h1>
 
         <p>Ask a question about current events.</p>
 
         <form action="/" method="post">
             <fieldset>
                 <label>
-                    Query
+                    New Query
                     <input type="text" name="query">
                 </label>
                 <button type="submit">Ask</button>
             </fieldset>
         </form>
+    </section>
+
+    <section>
+        <h2>Question</h2>
+        <p>{{.Query}}</p>
+    </section>
+
+    <section>
+        <h2>Answer</h2>
+        <p>Source: <a href="{{.Source}}">{{.Source}}</a></p>
+
+        {{ $response := .Response.GetAll }}
+        <p>{{range $part := $response}}{{$part}}{{end}}</p>
     </section>
 {{- end}}

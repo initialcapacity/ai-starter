@@ -2,10 +2,13 @@ package ai
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/Azure/azure-sdk-for-go/sdk/ai/azopenai"
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore"
+	"io"
 	"log"
+	"log/slog"
 )
 
 type Client struct {
@@ -35,17 +38,41 @@ func (client Client) CreateEmbedding(ctx context.Context, text string) ([]float3
 	return embeddings.Data[0].Embedding, nil
 }
 
-func (client Client) GetChatCompletion(ctx context.Context, messages []ChatMessage) (string, error) {
+func (client Client) GetChatCompletion(ctx context.Context, messages []ChatMessage) (chan string, error) {
 	model := "gpt-4-turbo"
-	chatResponse, err := client.openAiClient.GetChatCompletions(ctx, azopenai.ChatCompletionsOptions{
+	chatResponse, streamError := client.openAiClient.GetChatCompletionsStream(ctx, azopenai.ChatCompletionsOptions{
 		Messages:       toOpenAiMessages(messages),
 		DeploymentName: &model,
 	}, nil)
-	if err != nil {
-		return "", fmt.Errorf("unable to get completions: %w", err)
+	if streamError != nil {
+		return nil, fmt.Errorf("unable to get completions: %w", streamError)
 	}
 
-	return *chatResponse.ChatCompletions.Choices[0].Message.Content, nil
+	response := make(chan string)
+
+	go func() {
+		for {
+			chatCompletions, err := chatResponse.ChatCompletionsStream.Read()
+
+			if errors.Is(err, io.EOF) {
+				close(response)
+				break
+			}
+
+			if err != nil {
+				log.Fatalf("Error streaming response: %s", err)
+			}
+
+			choice := chatCompletions.Choices[0]
+			content := choice.Delta.Content
+			if content != nil {
+				slog.Info("Got content: ", "content", *content)
+				response <- *content
+			}
+		}
+	}()
+
+	return response, nil
 }
 
 type Role string

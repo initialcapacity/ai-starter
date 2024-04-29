@@ -4,26 +4,22 @@ import (
 	"fmt"
 	"github.com/initialcapacity/ai-starter/internal/ai"
 	"github.com/initialcapacity/ai-starter/internal/analyzer"
+	"github.com/initialcapacity/ai-starter/pkg/deferrable"
 	"github.com/initialcapacity/ai-starter/pkg/websupport"
 	"log/slog"
 	"net/http"
 )
 
-type model struct {
-	Heading  string
-	Label    string
-	Query    string
-	Response string
-	Source   string
-}
-
 func Index() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		_ = websupport.Render(w, Resources, "index", model{
-			Heading: "What would you like to know?",
-			Label:   "Query",
-		})
+		_ = websupport.Render(w, Resources, "index", nil)
 	}
+}
+
+type model struct {
+	Query    string
+	Response deferrable.Deferrable[string]
+	Source   string
 }
 
 func Query(aiClient ai.Client, embeddingsGateway *analyzer.EmbeddingsGateway) http.HandlerFunc {
@@ -34,8 +30,8 @@ func Query(aiClient ai.Client, embeddingsGateway *analyzer.EmbeddingsGateway) ht
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		query := r.Form.Get("query")
 
+		query := r.Form.Get("query")
 		embedding, err := aiClient.CreateEmbedding(r.Context(), query)
 		if err != nil {
 			slog.Error("unable to create embedding", err)
@@ -50,7 +46,7 @@ func Query(aiClient ai.Client, embeddingsGateway *analyzer.EmbeddingsGateway) ht
 			return
 		}
 
-		response, err := aiClient.GetChatCompletion(r.Context(), []ai.ChatMessage{
+		responseChannel, err := aiClient.GetChatCompletion(r.Context(), []ai.ChatMessage{
 			{Role: ai.System, Content: "You are a reporter for a major world newspaper."},
 			{Role: ai.System, Content: "Write your response as if you were writing a short, high-quality news article for your paper. Limit your response to one paragraph."},
 			{Role: ai.System, Content: fmt.Sprintf("Use the following article for context: %s", record.Content)},
@@ -62,11 +58,9 @@ func Query(aiClient ai.Client, embeddingsGateway *analyzer.EmbeddingsGateway) ht
 			return
 		}
 
-		_ = websupport.Render(w, Resources, "index", model{
-			Heading:  "What else would you like to know?",
-			Label:    "New Query",
+		_ = websupport.Render(w, Resources, "response", model{
 			Query:    query,
-			Response: response,
+			Response: deferrable.New(w, responseChannel),
 			Source:   record.Source,
 		})
 	}
