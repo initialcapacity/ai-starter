@@ -1,0 +1,8 @@
+.source {
+    text-wrap: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    opacity: .7;
+    font-size: .9rem;
+    font-style: italic;
+}
