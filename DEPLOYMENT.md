@@ -96,10 +96,18 @@
     gcloud pubsub topics create analyzer
     ``` 
 
+## Variables
+
 Repository variables for pipeline
 
 ```shell
 GCP_PROJECT_ID=${PROJECT_ID}
 GCP_WORKLOAD_IDENTITY_POOL_ID=${WORKLOAD_IDENTITY_POOL_ID}/providers/github-provider
 GCP_SERVICE_ACCOUNT=github-service-account@${PROJECT_ID}.iam.gserviceaccount.com
+```
+
+Variable for Cloud Run
+
+```shell
+DATABASE_URL=user=${DB_USER} password=${DB_PASSWORD} database=${DB_NAME} host=/cloudsql/${PROJECT_ID}:us-central1:${CLOUD_SQL_INSTANCE_NAME}
 ```
