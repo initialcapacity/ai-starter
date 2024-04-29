@@ -1,6 +1,9 @@
 package collector
 
-import "database/sql"
+import (
+	"database/sql"
+	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
+)
 
 type DataGateway struct {
 	db *sql.DB
@@ -10,10 +13,32 @@ func NewDataGateway(db *sql.DB) *DataGateway {
 	return &DataGateway{db: db}
 }
 
+func (g *DataGateway) UnprocessedIds() ([]string, error) {
+	return dbsupport.Query(
+		g.db,
+		`select data.id from data
+			left join public.embeddings e on data.id = e.data_id
+			where e.id is null`,
+		func(rows *sql.Rows, id *string) error { return rows.Scan(id) })
+}
+
+func (g *DataGateway) GetContent(id string) (string, error) {
+	return dbsupport.QueryOne(
+		g.db,
+		"select content from data where id = $1",
+		func(row *sql.Row, content *string) error { return row.Scan(content) },
+		id,
+	)
+}
+
 func (g *DataGateway) Exists(source string) (bool, error) {
-	var count int
-	row := g.db.QueryRow("select count(1) as count from data where source = $1", source)
-	err := row.Scan(&count)
+	count, err := dbsupport.QueryOne(
+		g.db,
+		"select count(1) as count from data where source = $1",
+		func(row *sql.Row, count *int) error { return row.Scan(count) },
+		source,
+	)
+
 	return count > 0, err
 }
 

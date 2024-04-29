@@ -10,9 +10,6 @@ import (
 
 func Handlers(openAiKey string) func(mux *http.ServeMux) {
 	keyCredential := azcore.NewKeyCredential(openAiKey)
-
-	// NOTE: this constructor creates a client that connects to an Azure OpenAI endpoint.
-	// To connect to the public OpenAI endpoint, use azopenai.NewClientForOpenAI
 	client, err := azopenai.NewClientForOpenAI("https://api.openai.com/v1", keyCredential, nil)
 	if err != nil {
 		slog.Error("unable to create client", err)

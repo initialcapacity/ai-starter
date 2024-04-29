@@ -8,8 +8,10 @@ require (
 	github.com/GoogleCloudPlatform/functions-framework-go v1.8.1
 	github.com/cloudevents/sdk-go/v2 v2.15.2
 	github.com/golang-migrate/migrate/v4 v4.17.1
-	github.com/stretchr/testify v1.8.4
 	github.com/lib/pq v1.10.9
+	github.com/pgvector/pgvector-go v0.1.1
+	github.com/stretchr/testify v1.8.4
+	golang.org/x/net v0.21.0
 )
 
 require (
@@ -25,7 +27,6 @@ require (
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.1.0 // indirect
 	go.uber.org/zap v1.10.0 // indirect
-	golang.org/x/net v0.21.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

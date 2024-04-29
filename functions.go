@@ -10,6 +10,7 @@ import (
 	"github.com/initialcapacity/ai-starter/internal/collector"
 	"github.com/initialcapacity/ai-starter/pkg/feedsupport"
 	"github.com/initialcapacity/ai-starter/pkg/websupport"
+	_ "github.com/lib/pq"
 	"log"
 	"net/http"
 	"strings"
