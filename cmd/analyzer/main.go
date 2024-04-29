@@ -7,7 +7,6 @@ import (
 	"github.com/initialcapacity/ai-starter/internal/collector"
 	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
 	"github.com/initialcapacity/ai-starter/pkg/websupport"
-	_ "github.com/lib/pq"
 	"log/slog"
 )
 
@@ -16,11 +15,11 @@ func main() {
 	openAiKey := websupport.RequireEnvironmentVariable[string]("OPEN_AI_KEY")
 
 	db := dbsupport.CreateConnection(databaseUrl)
-	dataGateway := collector.NewDataGateway(db)
+	chunksGateway := collector.NewChunksGateway(db)
 	embeddingsGateway := analyzer.NewEmbeddingsGateway(db)
 	aiClient := ai.NewClient(openAiKey)
 
-	a := analyzer.NewAnalyzer(dataGateway, embeddingsGateway, aiClient)
+	a := analyzer.NewAnalyzer(chunksGateway, embeddingsGateway, aiClient)
 
 	err := a.Analyze(context.Background())
 

@@ -11,12 +11,14 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/pgvector/pgvector-go v0.1.1
 	github.com/stretchr/testify v1.8.4
+	github.com/tiktoken-go/tokenizer v0.1.0
 	golang.org/x/net v0.21.0
 )
 
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/internal v1.5.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/dlclark/regexp2 v1.9.0 // indirect
 	github.com/google/uuid v1.4.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect

@@ -5,30 +5,17 @@ import (
 	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
 )
 
+type DataRecord struct {
+	Content string
+	Source  string
+}
+
 type DataGateway struct {
 	db *sql.DB
 }
 
 func NewDataGateway(db *sql.DB) *DataGateway {
 	return &DataGateway{db: db}
-}
-
-func (g *DataGateway) UnprocessedIds() ([]string, error) {
-	return dbsupport.Query(
-		g.db,
-		`select data.id from data
-			left join public.embeddings e on data.id = e.data_id
-			where e.id is null`,
-		func(rows *sql.Rows, id *string) error { return rows.Scan(id) })
-}
-
-func (g *DataGateway) GetContent(id string) (string, error) {
-	return dbsupport.QueryOne(
-		g.db,
-		"select content from data where id = $1",
-		func(row *sql.Row, content *string) error { return row.Scan(content) },
-		id,
-	)
 }
 
 func (g *DataGateway) Exists(source string) (bool, error) {
@@ -42,7 +29,11 @@ func (g *DataGateway) Exists(source string) (bool, error) {
 	return count > 0, err
 }
 
-func (g *DataGateway) Save(source, content string) error {
-	_, err := g.db.Exec("insert into data (source, content) values ($1, $2)", source, content)
-	return err
+func (g *DataGateway) Save(source, content string) (string, error) {
+	return dbsupport.QueryOne(
+		g.db,
+		"insert into data (source, content) values ($1, $2) returning id",
+		func(row *sql.Row, id *string) error { return row.Scan(id) },
+		source, content,
+	)
 }

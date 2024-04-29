@@ -24,6 +24,10 @@
     {{if .Response }}
         <section>
             <h2>Answer</h2>
+            {{if .Source}}
+                <p>Source: <a href="{{.Source}}">{{.Source}}</a></p>
+            {{end}}
+            
             <p>{{.Response}}</p>
         </section>
     {{end}}

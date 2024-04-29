@@ -1,13 +1,12 @@
 package main
 
 import (
-	"database/sql"
-	"fmt"
+	"github.com/initialcapacity/ai-starter/internal/ai"
 	"github.com/initialcapacity/ai-starter/internal/collector"
+	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
 	"github.com/initialcapacity/ai-starter/pkg/feedsupport"
 	"github.com/initialcapacity/ai-starter/pkg/websupport"
-	_ "github.com/lib/pq"
-	"log"
+	"github.com/tiktoken-go/tokenizer"
 	"log/slog"
 	"net/http"
 	"strings"
@@ -19,18 +18,19 @@ func main() {
 	feedUrls := strings.Split(feeds, ",")
 
 	client := http.Client{}
-	db, err := sql.Open("postgres", databaseUrl)
-	if err != nil {
-		log.Fatal(fmt.Errorf("unable to connect to database: %w", err))
-	}
+	db := dbsupport.CreateConnection(databaseUrl)
 
 	parser := feedsupport.NewParser(client)
 	extractor := feedsupport.NewExtractor(client)
 	dataGateway := collector.NewDataGateway(db)
+	t := ai.NewTokenizer(tokenizer.Cl100kBase)
+	chunksGateway := collector.NewChunksGateway(db)
+	chunker := collector.NewChunker(t, 6000)
+	chunksService := collector.NewChunksService(chunker, chunksGateway)
 
-	c := collector.New(parser, extractor, dataGateway)
+	c := collector.New(parser, extractor, dataGateway, chunksService)
 
-	err = c.Collect(feedUrls)
+	err := c.Collect(feedUrls)
 
 	if err == nil {
 		slog.Info("successful collection")

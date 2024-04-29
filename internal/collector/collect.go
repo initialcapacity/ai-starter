@@ -7,13 +7,14 @@ import (
 )
 
 type Collector struct {
-	extractor feedsupport.Extractor
-	rssParser feedsupport.Parser
-	gateway   *DataGateway
+	extractor     feedsupport.Extractor
+	rssParser     feedsupport.Parser
+	gateway       *DataGateway
+	chunksService *ChunksService
 }
 
-func New(rssParser feedsupport.Parser, extractor feedsupport.Extractor, gateway *DataGateway) *Collector {
-	return &Collector{rssParser: rssParser, extractor: extractor, gateway: gateway}
+func New(rssParser feedsupport.Parser, extractor feedsupport.Extractor, gateway *DataGateway, chunksService *ChunksService) *Collector {
+	return &Collector{rssParser: rssParser, extractor: extractor, gateway: gateway, chunksService: chunksService}
 }
 
 func (c *Collector) Collect(feedUrls []string) error {
@@ -35,9 +36,16 @@ func (c *Collector) Collect(feedUrls []string) error {
 		text, err := c.extractor.FullText(link)
 		if err != nil {
 			linkErrors = append(linkErrors, err)
+			continue
 		}
 
-		err = c.gateway.Save(link, text)
+		dataId, err := c.gateway.Save(link, text)
+		if err != nil {
+			linkErrors = append(linkErrors, err)
+			continue
+		}
+
+		err = c.chunksService.SaveChunks(dataId, text)
 		if err != nil {
 			linkErrors = append(linkErrors, err)
 		}
