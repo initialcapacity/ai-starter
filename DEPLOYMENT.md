@@ -20,6 +20,7 @@
      cloudfunctions.googleapis.com \
      eventarc.googleapis.com \
      cloudresourcemanager.googleapis.com \
+     compute.googleapis.com \
      --project "${PROJECT_ID}"
     gcloud iam service-accounts create github-service-account --project "${PROJECT_ID}"
     ```
