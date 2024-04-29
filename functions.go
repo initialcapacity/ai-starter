@@ -2,16 +2,16 @@ package functions
 
 import (
 	"context"
-	"database/sql"
-	"fmt"
 	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
 	"github.com/cloudevents/sdk-go/v2/event"
+	"github.com/initialcapacity/ai-starter/internal/ai"
 	"github.com/initialcapacity/ai-starter/internal/analyzer"
 	"github.com/initialcapacity/ai-starter/internal/collector"
+	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
 	"github.com/initialcapacity/ai-starter/pkg/feedsupport"
 	"github.com/initialcapacity/ai-starter/pkg/websupport"
 	_ "github.com/lib/pq"
-	"log"
+	"github.com/tiktoken-go/tokenizer"
 	"net/http"
 	"strings"
 )
@@ -27,20 +27,31 @@ func triggerCollect(ctx context.Context, e event.Event) error {
 	feedUrls := strings.Split(feeds, ",")
 
 	client := http.Client{}
-	db, err := sql.Open("postgres", databaseUrl)
-	if err != nil {
-		log.Fatal(fmt.Errorf("unable to connect to database: %w", err))
-	}
+	db := dbsupport.CreateConnection(databaseUrl)
 
 	parser := feedsupport.NewParser(client)
 	extractor := feedsupport.NewExtractor(client)
 	dataGateway := collector.NewDataGateway(db)
+	t := ai.NewTokenizer(tokenizer.Cl100kBase)
+	chunksGateway := collector.NewChunksGateway(db)
+	chunker := collector.NewChunker(t, 6000)
+	chunksService := collector.NewChunksService(chunker, chunksGateway)
 
-	c := collector.New(parser, extractor, dataGateway)
+	c := collector.New(parser, extractor, dataGateway, chunksService)
 
 	return c.Collect(feedUrls)
 }
 
 func triggerAnalyze(ctx context.Context, e event.Event) error {
-	return analyzer.Analyze()
+	databaseUrl := websupport.RequireEnvironmentVariable[string]("DATABASE_URL")
+	openAiKey := websupport.RequireEnvironmentVariable[string]("OPEN_AI_KEY")
+
+	db := dbsupport.CreateConnection(databaseUrl)
+	chunksGateway := collector.NewChunksGateway(db)
+	embeddingsGateway := analyzer.NewEmbeddingsGateway(db)
+	aiClient := ai.NewClient(openAiKey)
+
+	a := analyzer.NewAnalyzer(chunksGateway, embeddingsGateway, aiClient)
+
+	return a.Analyze(context.Background())
 }
