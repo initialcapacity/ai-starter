@@ -15,9 +15,9 @@ type Client struct {
 	openAiClient *azopenai.Client
 }
 
-func NewClient(openAiKey string) Client {
+func NewClient(openAiKey, openAiEndpoint string) Client {
 	keyCredential := azcore.NewKeyCredential(openAiKey)
-	openAiClient, err := azopenai.NewClientForOpenAI("https://api.openai.com/v1", keyCredential, nil)
+	openAiClient, err := azopenai.NewClientForOpenAI(openAiEndpoint, keyCredential, nil)
 	if err != nil {
 		log.Fatal(fmt.Errorf("unable to create Open AI client: %w", err))
 	}

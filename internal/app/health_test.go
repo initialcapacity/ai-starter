@@ -8,7 +8,7 @@ import (
 )
 
 func TestHealth(t *testing.T) {
-	server := websupport.NewServer(app.Handlers("", ""))
+	server := websupport.NewServer(app.Handlers("", "", ""))
 	port, _ := server.Start("localhost", 0)
 	testsupport.AssertHealthy(t, port, "/health")
 }

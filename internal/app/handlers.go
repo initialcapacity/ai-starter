@@ -8,8 +8,8 @@ import (
 	"net/http"
 )
 
-func Handlers(openAiKey, databaseUrl string) func(mux *http.ServeMux) {
-	aiClient := ai.NewClient(openAiKey)
+func Handlers(openAiKey, openAiEndpoint, databaseUrl string) func(mux *http.ServeMux) {
+	aiClient := ai.NewClient(openAiKey, openAiEndpoint)
 	db := dbsupport.CreateConnection(databaseUrl)
 	embeddingsGateway := analyzer.NewEmbeddingsGateway(db)
 

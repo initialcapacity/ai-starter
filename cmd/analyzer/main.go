@@ -13,11 +13,12 @@ import (
 func main() {
 	databaseUrl := websupport.RequireEnvironmentVariable[string]("DATABASE_URL")
 	openAiKey := websupport.RequireEnvironmentVariable[string]("OPEN_AI_KEY")
+	openAiEndpoint := websupport.EnvironmentVariable("OPEN_AI_ENDPOINT", "https://api.openai.com/v1")
 
 	db := dbsupport.CreateConnection(databaseUrl)
 	chunksGateway := collector.NewChunksGateway(db)
 	embeddingsGateway := analyzer.NewEmbeddingsGateway(db)
-	aiClient := ai.NewClient(openAiKey)
+	aiClient := ai.NewClient(openAiKey, openAiEndpoint)
 
 	a := analyzer.NewAnalyzer(chunksGateway, embeddingsGateway, aiClient)
 

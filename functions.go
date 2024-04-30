@@ -44,11 +44,12 @@ func triggerCollect(ctx context.Context, e event.Event) error {
 func triggerAnalyze(ctx context.Context, e event.Event) error {
 	databaseUrl := websupport.RequireEnvironmentVariable[string]("DATABASE_URL")
 	openAiKey := websupport.RequireEnvironmentVariable[string]("OPEN_AI_KEY")
+	openAiEndpoint := websupport.EnvironmentVariable("OPEN_AI_ENDPOINT", "https://api.openai.com/v1")
 
 	db := dbsupport.CreateConnection(databaseUrl)
 	chunksGateway := collector.NewChunksGateway(db)
 	embeddingsGateway := analyzer.NewEmbeddingsGateway(db)
-	aiClient := ai2.NewClient(openAiKey)
+	aiClient := ai2.NewClient(openAiKey, openAiEndpoint)
 
 	a := analyzer.NewAnalyzer(chunksGateway, embeddingsGateway, aiClient)
 
