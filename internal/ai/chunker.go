@@ -1,26 +1,23 @@
-package collector
-
-import (
-	"github.com/initialcapacity/ai-starter/internal/ai"
-)
+package ai
 
 type Chunker struct {
-	tokenizer *ai.Tokenizer
+	tokenizer *Tokenizer
 	limit     int
 }
 
-func NewChunker(tokenizer *ai.Tokenizer, limit int) Chunker {
+func NewChunker(tokenizer *Tokenizer, limit int) Chunker {
 	return Chunker{tokenizer: tokenizer, limit: limit}
 }
 
 func (chunker Chunker) Split(text string) []string {
 	tokenCount := chunker.tokenizer.CountTokens(text)
+	overlap := chunker.limit / 30
 
 	if tokenCount < chunker.limit {
 		return []string{text}
 	} else {
-		firstPart := text[:len(text)/2+200]
-		secondPart := text[len(text)/2-200:]
+		firstPart := text[:len(text)/2+overlap]
+		secondPart := text[len(text)/2-overlap:]
 
 		return append(chunker.Split(firstPart), chunker.Split(secondPart)...)
 	}

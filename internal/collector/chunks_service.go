@@ -1,13 +1,16 @@
 package collector
 
-import "errors"
+import (
+	"errors"
+	"github.com/initialcapacity/ai-starter/internal/ai"
+)
 
 type ChunksService struct {
-	chunker Chunker
+	chunker ai.Chunker
 	gateway *ChunksGateway
 }
 
-func NewChunksService(chunker Chunker, gateway *ChunksGateway) *ChunksService {
+func NewChunksService(chunker ai.Chunker, gateway *ChunksGateway) *ChunksService {
 	return &ChunksService{chunker: chunker, gateway: gateway}
 }
 

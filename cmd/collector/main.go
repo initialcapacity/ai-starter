@@ -25,7 +25,7 @@ func main() {
 	dataGateway := collector.NewDataGateway(db)
 	t := ai.NewTokenizer(tokenizer.Cl100kBase)
 	chunksGateway := collector.NewChunksGateway(db)
-	chunker := collector.NewChunker(t, 6000)
+	chunker := ai.NewChunker(t, 6000)
 	chunksService := collector.NewChunksService(chunker, chunksGateway)
 
 	c := collector.New(parser, extractor, dataGateway, chunksService)
