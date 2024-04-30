@@ -54,19 +54,19 @@ func (client Client) GetChatCompletion(ctx context.Context, messages []ChatMessa
 		for {
 			chatCompletions, err := chatResponse.ChatCompletionsStream.Read()
 
-			if errors.Is(err, io.EOF) {
+			if err != nil {
+				if !errors.Is(err, io.EOF) {
+					response <- "\n\nAn error occurred. Please try your query again."
+					slog.Error("error streaming response", "error", err)
+				}
+
 				close(response)
 				break
-			}
-
-			if err != nil {
-				log.Fatalf("Error streaming response: %s", err)
 			}
 
 			choice := chatCompletions.Choices[0]
 			content := choice.Delta.Content
 			if content != nil {
-				slog.Info("Got content: ", "content", *content)
 				response <- *content
 			}
 		}

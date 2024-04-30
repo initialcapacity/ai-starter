@@ -11,9 +11,13 @@
                     New Query
                     <input type="text" name="query">
                 </label>
-                <button type="submit">Ask</button>
+                <button type="submit" class="loader">Ask</button>
             </fieldset>
         </form>
+        <script>
+            const form = document.querySelector('form');
+            form.onsubmit = () => form.querySelector('button').setAttribute("disabled", "disabled")
+        </script>
     </section>
 
     <section>

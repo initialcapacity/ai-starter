@@ -33,3 +33,16 @@ a.button {
     color: var(--text-color);
     text-decoration: none;
 }
+
+button.loader {
+    padding-left: 3rem;
+    background-image: url("../images/search.svg");
+    background-repeat: no-repeat;
+    background-position-x: .75rem;
+    background-position-y: center;
+    background-size: 1.5rem 1.5rem;
+
+    &[disabled] {
+        background-image: url("../images/loader-white.svg");
+    }
+}
