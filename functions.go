@@ -4,9 +4,9 @@ import (
 	"context"
 	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
 	"github.com/cloudevents/sdk-go/v2/event"
-	"github.com/initialcapacity/ai-starter/internal/ai"
 	"github.com/initialcapacity/ai-starter/internal/analyzer"
 	"github.com/initialcapacity/ai-starter/internal/collector"
+	ai2 "github.com/initialcapacity/ai-starter/pkg/ai"
 	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
 	"github.com/initialcapacity/ai-starter/pkg/feedsupport"
 	"github.com/initialcapacity/ai-starter/pkg/websupport"
@@ -31,9 +31,9 @@ func triggerCollect(ctx context.Context, e event.Event) error {
 	parser := feedsupport.NewParser(client)
 	extractor := feedsupport.NewExtractor(client)
 	dataGateway := collector.NewDataGateway(db)
-	t := ai.NewTokenizer(tokenizer.Cl100kBase)
+	t := ai2.NewTokenizer(tokenizer.Cl100kBase)
 	chunksGateway := collector.NewChunksGateway(db)
-	chunker := ai.NewChunker(t, 6000)
+	chunker := ai2.NewChunker(t, 6000)
 	chunksService := collector.NewChunksService(chunker, chunksGateway)
 
 	c := collector.New(parser, extractor, dataGateway, chunksService)
@@ -48,7 +48,7 @@ func triggerAnalyze(ctx context.Context, e event.Event) error {
 	db := dbsupport.CreateConnection(databaseUrl)
 	chunksGateway := collector.NewChunksGateway(db)
 	embeddingsGateway := analyzer.NewEmbeddingsGateway(db)
-	aiClient := ai.NewClient(openAiKey)
+	aiClient := ai2.NewClient(openAiKey)
 
 	a := analyzer.NewAnalyzer(chunksGateway, embeddingsGateway, aiClient)
 

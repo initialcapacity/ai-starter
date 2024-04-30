@@ -2,7 +2,7 @@ package collector
 
 import (
 	"errors"
-	"github.com/initialcapacity/ai-starter/internal/ai"
+	"github.com/initialcapacity/ai-starter/pkg/ai"
 )
 
 type ChunksService struct {

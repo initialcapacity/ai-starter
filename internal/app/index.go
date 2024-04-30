@@ -2,8 +2,8 @@ package app
 
 import (
 	"fmt"
-	"github.com/initialcapacity/ai-starter/internal/ai"
 	"github.com/initialcapacity/ai-starter/internal/analyzer"
+	"github.com/initialcapacity/ai-starter/pkg/ai"
 	"github.com/initialcapacity/ai-starter/pkg/deferrable"
 	"github.com/initialcapacity/ai-starter/pkg/websupport"
 	"log/slog"

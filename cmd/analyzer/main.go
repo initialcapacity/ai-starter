@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
-	"github.com/initialcapacity/ai-starter/internal/ai"
 	"github.com/initialcapacity/ai-starter/internal/analyzer"
 	"github.com/initialcapacity/ai-starter/internal/collector"
+	"github.com/initialcapacity/ai-starter/pkg/ai"
 	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
 	"github.com/initialcapacity/ai-starter/pkg/websupport"
 	"log/slog"

@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/initialcapacity/ai-starter/internal/ai"
 	"github.com/initialcapacity/ai-starter/internal/collector"
+	"github.com/initialcapacity/ai-starter/pkg/ai"
 	"log/slog"
 )
 

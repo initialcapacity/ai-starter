@@ -1,7 +1,7 @@
 package ai_test
 
 import (
-	"github.com/initialcapacity/ai-starter/internal/ai"
+	"github.com/initialcapacity/ai-starter/pkg/ai"
 	"github.com/stretchr/testify/assert"
 	tokenizer2 "github.com/tiktoken-go/tokenizer"
 	"testing"

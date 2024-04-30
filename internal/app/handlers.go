@@ -1,8 +1,8 @@
 package app
 
 import (
-	"github.com/initialcapacity/ai-starter/internal/ai"
 	"github.com/initialcapacity/ai-starter/internal/analyzer"
+	"github.com/initialcapacity/ai-starter/pkg/ai"
 	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
 	"io/fs"
 	"net/http"
