@@ -12,7 +12,7 @@ import (
 )
 
 type Client struct {
-	openAiClient *azopenai.Client
+	OpenAiClient *azopenai.Client
 }
 
 func NewClient(openAiKey, openAiEndpoint string) Client {
@@ -22,12 +22,12 @@ func NewClient(openAiKey, openAiEndpoint string) Client {
 		log.Fatal(fmt.Errorf("unable to create Open AI client: %w", err))
 	}
 
-	return Client{openAiClient: openAiClient}
+	return Client{OpenAiClient: openAiClient}
 }
 
 func (client Client) CreateEmbedding(ctx context.Context, text string) ([]float32, error) {
 	model := "text-embedding-3-large"
-	embeddings, err := client.openAiClient.GetEmbeddings(ctx, azopenai.EmbeddingsOptions{
+	embeddings, err := client.OpenAiClient.GetEmbeddings(ctx, azopenai.EmbeddingsOptions{
 		Input:          []string{text},
 		DeploymentName: &model,
 	}, nil)
@@ -40,7 +40,7 @@ func (client Client) CreateEmbedding(ctx context.Context, text string) ([]float3
 
 func (client Client) GetChatCompletion(ctx context.Context, messages []ChatMessage) (chan string, error) {
 	model := "gpt-4-turbo"
-	chatResponse, streamError := client.openAiClient.GetChatCompletionsStream(ctx, azopenai.ChatCompletionsOptions{
+	chatResponse, streamError := client.OpenAiClient.GetChatCompletionsStream(ctx, azopenai.ChatCompletionsOptions{
 		Messages:       toOpenAiMessages(messages),
 		DeploymentName: &model,
 	}, nil)
