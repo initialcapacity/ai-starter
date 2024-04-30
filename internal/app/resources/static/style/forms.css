@@ -4,10 +4,6 @@ form {
     gap: 1rem;
 }
 
-form:not(:last-child) {
-    margin-bottom: 2rem;
-}
-
 fieldset {
     display: flex;
     gap: 1rem;
