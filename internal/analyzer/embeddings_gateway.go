@@ -19,6 +19,15 @@ func NewEmbeddingsGateway(db *sql.DB) *EmbeddingsGateway {
 	return &EmbeddingsGateway{db: db}
 }
 
+func (g *EmbeddingsGateway) UnprocessedIds() ([]string, error) {
+	return dbsupport.Query(
+		g.db,
+		`select chunks.id from chunks
+			left join public.embeddings e on chunks.id = e.chunk_id
+			where e.id is null`,
+		func(rows *sql.Rows, id *string) error { return rows.Scan(id) })
+}
+
 func (g *EmbeddingsGateway) Save(chunkId string, vector []float32) error {
 	_, err := g.db.Exec("insert into embeddings (chunk_id, embedding) values ($1, $2)", chunkId, pgvector.NewVector(vector))
 	return err

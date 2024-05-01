@@ -1,7 +1,9 @@
 package collector_test
 
 import (
+	"database/sql"
 	"github.com/initialcapacity/ai-starter/internal/collector"
+	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
 	"github.com/initialcapacity/ai-starter/pkg/testsupport"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -19,17 +21,10 @@ func TestChunksService_SaveChunks(t *testing.T) {
 	err := chunksService.SaveChunks("41345dc1-2f3f-4bc9-8dba-ba397156cc16", "some content")
 	assert.NoError(t, err)
 
-	ids, err := chunksGateway.UnprocessedIds()
+	content, err := dbsupport.Query(testDb.DB, "select content from chunks", func(rows *sql.Rows, content *string) error {
+		return rows.Scan(content)
+	})
 	assert.NoError(t, err)
-
-	var content []string
-	for _, id := range ids {
-		chunk, getErr := chunksGateway.Get(id)
-		assert.NoError(t, getErr)
-
-		content = append(content, chunk.Content)
-	}
-
 	testsupport.AssertContainsExactly(t, []string{"some c", "ontent"}, content)
 }
 

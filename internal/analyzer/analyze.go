@@ -23,7 +23,7 @@ func (a *Analyzer) Analyze(ctx context.Context) error {
 	slog.Info("Starting to analyze data")
 	defer slog.Info("Finished analyzing data")
 
-	ids, listErr := a.chunksGateway.UnprocessedIds()
+	ids, listErr := a.embeddingsGateway.UnprocessedIds()
 	if listErr != nil {
 		return fmt.Errorf("unable to list ids: %w", listErr)
 	}

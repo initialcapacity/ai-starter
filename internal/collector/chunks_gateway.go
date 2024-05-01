@@ -18,15 +18,6 @@ func NewChunksGateway(db *sql.DB) *ChunksGateway {
 	return &ChunksGateway{db: db}
 }
 
-func (g *ChunksGateway) UnprocessedIds() ([]string, error) {
-	return dbsupport.Query(
-		g.db,
-		`select chunks.id from chunks
-			left join public.embeddings e on chunks.id = e.chunk_id
-			where e.id is null`,
-		func(rows *sql.Rows, id *string) error { return rows.Scan(id) })
-}
-
 func (g *ChunksGateway) Get(id string) (ChunkRecord, error) {
 	return dbsupport.QueryOne(
 		g.db,
