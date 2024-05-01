@@ -2,15 +2,14 @@ package collector
 
 import (
 	"errors"
-	"github.com/initialcapacity/ai-starter/pkg/ai"
 )
 
 type ChunksService struct {
-	chunker ai.Chunker
+	chunker Chunker
 	gateway *ChunksGateway
 }
 
-func NewChunksService(chunker ai.Chunker, gateway *ChunksGateway) *ChunksService {
+func NewChunksService(chunker Chunker, gateway *ChunksGateway) *ChunksService {
 	return &ChunksService{chunker: chunker, gateway: gateway}
 }
 
@@ -22,4 +21,8 @@ func (service ChunksService) SaveChunks(dataId, text string) error {
 		saveErrors = append(saveErrors, service.gateway.Save(dataId, chunk))
 	}
 	return errors.Join(saveErrors...)
+}
+
+type Chunker interface {
+	Split(text string) []string
 }
