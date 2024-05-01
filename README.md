@@ -92,10 +92,11 @@ flowchart LR
 1.  Install [Go](https://formulae.brew.sh/formula/go), [PostgreSQL 15](https://formulae.brew.sh/formula/postgresql@15), and
 [pgvector](https://github.com/pgvector/pgvector).
 
-1.  Create and migrate the local database.
+1.  Create and migrate the local databases.
     ```shell
     psql postgres < ./databases/create_databases.sql
     DATABASE_URL="postgres://starter:starter@localhost:5432/starter_development?sslmode=disable" go run ./cmd/migrate
+    DATABASE_URL="postgres://starter:starter@localhost:5432/starter_test?sslmode=disable" go run ./cmd/migrate
     ```
 
 1.  Copy the example environment file and fill in the necessary values.

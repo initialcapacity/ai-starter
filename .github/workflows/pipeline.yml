@@ -7,11 +7,33 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg15
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
           go-version-file: "go.mod"
+      - name: Install psql
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes postgresql-client
+      - name: Migrate test database
+        env:
+          DATABASE_URL: postgres://starter:starter@localhost:5432/starter_test?sslmode=disable
+        run: |
+          psql --host localhost --username postgres < databases/create_databases.sql
+          go run ./cmd/migrate
       - name: Run tests
         run: go test -race ./...
   build-app:
