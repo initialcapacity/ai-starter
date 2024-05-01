@@ -9,10 +9,15 @@ import (
 )
 
 func StartTestServer(t *testing.T, handlers websupport.Handlers) (string, *websupport.Server) {
-	server := websupport.NewServer(handlers)
+	server := websupport.NewServer(func(mux *http.ServeMux) {
+		handlers(mux)
+		mux.HandleFunc("GET /health-just-for-tests", func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+		})
+	})
 
 	port, _ := server.Start("localhost", 0)
-	AssertHealthy(t, port, "/health")
+	AssertHealthy(t, port, "/health-just-for-tests")
 
 	return fmt.Sprintf("http://localhost:%d", port), server
 }

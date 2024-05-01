@@ -14,7 +14,6 @@ import (
 
 func TestClient_CreateEmbedding(t *testing.T) {
 	endpoint, server := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
-		mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusOK) })
 		mux.HandleFunc("/embeddings", func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
 			_, err := w.Write([]byte(`{
@@ -36,7 +35,6 @@ func TestClient_CreateEmbedding(t *testing.T) {
 
 func TestClient_GetChatCompletion(t *testing.T) {
 	endpoint, server := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
-		mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusOK) })
 		mux.HandleFunc("/chat/completions", func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
 			_, err := w.Write(data(`{ "choices": [ { "delta": { "role": "assistant", "content": "Sounds good" } } ] }`))
