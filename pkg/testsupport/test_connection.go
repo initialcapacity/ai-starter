@@ -2,7 +2,6 @@ package testsupport
 
 import (
 	"database/sql"
-	"fmt"
 	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -22,10 +21,10 @@ func (tdb *TestDb) Close() {
 	assert.NoError(tdb.t, err)
 }
 
-func (tdb *TestDb) ClearTables(tableNames ...string) {
-	for _, tableName := range tableNames {
-		tdb.Execute(fmt.Sprintf("delete from %s", tableName))
-	}
+func (tdb *TestDb) ClearTables() {
+	tdb.Execute("delete from embeddings")
+	tdb.Execute("delete from chunks")
+	tdb.Execute("delete from data")
 }
 
 func (tdb *TestDb) Execute(statement string, arguments ...any) {
