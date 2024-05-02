@@ -3,11 +3,9 @@ package ai_test
 import (
 	"context"
 	"fmt"
-	"github.com/Azure/azure-sdk-for-go/sdk/ai/azopenai"
 	"github.com/initialcapacity/ai-starter/pkg/ai"
 	"github.com/initialcapacity/ai-starter/pkg/testsupport"
 	"github.com/stretchr/testify/assert"
-	"log"
 	"net/http"
 	"testing"
 )
@@ -26,7 +24,7 @@ func TestClient_CreateEmbedding(t *testing.T) {
 	})
 	defer testsupport.StopTestServer(t, server)
 
-	client := testAiClient(endpoint)
+	client := testsupport.NewTestAiClient(endpoint)
 	result, err := client.CreateEmbedding(context.Background(), "some text")
 
 	assert.NoError(t, err)
@@ -43,7 +41,7 @@ func TestClient_GetChatCompletion(t *testing.T) {
 	})
 	defer testsupport.StopTestServer(t, server)
 
-	client := testAiClient(endpoint)
+	client := testsupport.NewTestAiClient(endpoint)
 	completion, err := client.GetChatCompletion(context.Background(), []ai.ChatMessage{})
 
 	assert.NoError(t, err)
@@ -52,13 +50,4 @@ func TestClient_GetChatCompletion(t *testing.T) {
 
 func data(json string) []byte {
 	return []byte(fmt.Sprintf("data:%s\ndata:[DONE]", json))
-}
-
-func testAiClient(openAiEndpoint string) ai.Client {
-	openAiClient, err := azopenai.NewClientForOpenAI(openAiEndpoint, nil, nil)
-	if err != nil {
-		log.Fatal(fmt.Errorf("unable to create Open AI client: %w", err))
-	}
-
-	return ai.Client{OpenAiClient: openAiClient}
 }
