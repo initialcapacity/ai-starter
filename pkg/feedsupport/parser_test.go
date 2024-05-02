@@ -10,16 +10,14 @@ import (
 
 func TestParser_AllLinks(t *testing.T) {
 	endpoint, server := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
-		mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-			_, _ = w.Write([]byte(`
+		testsupport.Handle(mux, "/", `
 				<rss>
 					<channel>
 						<item><link>https://example.com/1</link></item>
 						<item><link>https://example.com/2</link></item>
 					</channel>
 				</rss>
-			`))
-		})
+			`)
 	})
 	defer testsupport.StopTestServer(t, server)
 	parser := feedsupport.NewParser(http.Client{})

@@ -10,8 +10,7 @@ import (
 
 func TestExtractor_FullText(t *testing.T) {
 	endpoint, server := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
-		mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-			_, _ = w.Write([]byte(`
+		testsupport.Handle(mux, "/", `
 				<html lang="en">
 					<body>
 						<script>const ignoreMe = true</script>
@@ -19,8 +18,7 @@ func TestExtractor_FullText(t *testing.T) {
 						<p>some text</p>
 					</body>
 				</html>
-			`))
-		})
+			`)
 	})
 	defer testsupport.StopTestServer(t, server)
 	extractor := feedsupport.NewExtractor(http.Client{})

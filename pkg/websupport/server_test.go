@@ -12,11 +12,7 @@ import (
 
 func TestCreate(t *testing.T) {
 	server := websupport.NewServer(func(mux *http.ServeMux) {
-		mux.HandleFunc("GET /", func(writer http.ResponseWriter, request *http.Request) {
-			writer.WriteHeader(200)
-			_, err := writer.Write([]byte("You passed the test"))
-			assert.NoError(t, err)
-		})
+		testsupport.Handle(mux, "GET /", "You passed the test")
 	})
 
 	port, _ := server.Start("localhost", 0)

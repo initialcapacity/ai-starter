@@ -12,15 +12,11 @@ import (
 
 func TestClient_CreateEmbedding(t *testing.T) {
 	endpoint, server := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
-		mux.HandleFunc("/embeddings", func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(http.StatusOK)
-			_, err := w.Write([]byte(`{
+		testsupport.Handle(mux, "/embeddings", `{
 				"data": [
 					{ "embedding": [1, 2, 3, 4] }
 				]
-			}`))
-			assert.NoError(t, err)
-		})
+			}`)
 	})
 	defer testsupport.StopTestServer(t, server)
 
