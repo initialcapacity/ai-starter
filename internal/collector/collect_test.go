@@ -14,24 +14,18 @@ import (
 
 func TestCollector_Collect(t *testing.T) {
 	feedEndpoint, feedServer := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
-		mux.HandleFunc("/feed1", func(w http.ResponseWriter, r *http.Request) {
-			_, _ = w.Write([]byte(`<html><h1>some text from feed 1</h1></html>`))
-		})
-		mux.HandleFunc("/feed2", func(w http.ResponseWriter, r *http.Request) {
-			_, _ = w.Write([]byte(`<html><h1>some text from feed 2</h1></html>`))
-		})
+		testsupport.Handle(mux, "/feed1", "<html><h1>some text from feed 1</h1></html>")
+		testsupport.Handle(mux, "/feed2", "<html><h1>some text from feed 2</h1></html>")
 	})
 	rssEndpoint, rssServer := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
-		mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-			_, _ = w.Write([]byte(fmt.Sprintf(`
+		testsupport.Handle(mux, "/", fmt.Sprintf(`
 				<rss>
 					<channel>
 						<item><link>%s/feed1</link></item>
 						<item><link>%s/feed2</link></item>
 					</channel>
 				</rss>
-			`, feedEndpoint, feedEndpoint)))
-		})
+			`, feedEndpoint, feedEndpoint))
 	})
 	defer func() {
 		testsupport.StopTestServer(t, rssServer)

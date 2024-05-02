@@ -51,3 +51,9 @@ func AssertHealthy(t *testing.T, port int, path string) {
 		t.Error("server did not respond in 100 milliseconds")
 	}
 }
+
+func Handle(mux *http.ServeMux, path string, responseBody string) {
+	mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte(responseBody))
+	})
+}
