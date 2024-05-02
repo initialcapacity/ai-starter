@@ -13,7 +13,7 @@ import (
 )
 
 func TestAnalyzer_Analyze(t *testing.T) {
-	vector := createVector(0)
+	vector := testsupport.CreateVector(0)
 	endpoint, server := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
 		testsupport.Handle(mux, "/embeddings", fmt.Sprintf(`{
 			"data": [
@@ -38,7 +38,7 @@ func TestAnalyzer_Analyze(t *testing.T) {
 	err := a.Analyze(context.Background())
 	assert.NoError(t, err)
 
-	chunk1, err := embeddingsGateway.FindSimilar(createVector(0))
+	chunk1, err := embeddingsGateway.FindSimilar(testsupport.CreateVector(0))
 	assert.NoError(t, err)
 	assert.Equal(t, analyzer.CitedChunkRecord{Content: "chunk1", Source: "https://example.com"}, chunk1)
 }
