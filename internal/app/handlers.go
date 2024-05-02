@@ -1,16 +1,14 @@
 package app
 
 import (
+	"database/sql"
 	"github.com/initialcapacity/ai-starter/internal/analyzer"
 	"github.com/initialcapacity/ai-starter/pkg/ai"
-	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
 	"io/fs"
 	"net/http"
 )
 
-func Handlers(openAiKey, openAiEndpoint, databaseUrl string) func(mux *http.ServeMux) {
-	aiClient := ai.NewClient(openAiKey, openAiEndpoint)
-	db := dbsupport.CreateConnection(databaseUrl)
+func Handlers(aiClient ai.Client, db *sql.DB) func(mux *http.ServeMux) {
 	embeddingsGateway := analyzer.NewEmbeddingsGateway(db)
 
 	return func(mux *http.ServeMux) {
