@@ -2,7 +2,6 @@ package ai_test
 
 import (
 	"context"
-	"fmt"
 	"github.com/initialcapacity/ai-starter/pkg/ai"
 	"github.com/initialcapacity/ai-starter/pkg/testsupport"
 	"github.com/stretchr/testify/assert"
@@ -31,7 +30,7 @@ func TestClient_GetChatCompletion(t *testing.T) {
 	endpoint, server := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
 		mux.HandleFunc("/chat/completions", func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
-			_, err := w.Write(data(`{ "choices": [ { "delta": { "role": "assistant", "content": "Sounds good" } } ] }`))
+			_, err := w.Write(testsupport.Stream(`{ "choices": [ { "delta": { "role": "assistant", "content": "Sounds good" } } ] }`))
 			assert.NoError(t, err)
 		})
 	})
@@ -42,8 +41,4 @@ func TestClient_GetChatCompletion(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.Equal(t, "Sounds good", <-completion)
-}
-
-func data(json string) []byte {
-	return []byte(fmt.Sprintf("data:%s\ndata:[DONE]", json))
 }

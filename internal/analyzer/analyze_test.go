@@ -8,7 +8,6 @@ import (
 	"github.com/initialcapacity/ai-starter/pkg/testsupport"
 	"github.com/stretchr/testify/assert"
 	"net/http"
-	"strings"
 	"testing"
 )
 
@@ -19,7 +18,7 @@ func TestAnalyzer_Analyze(t *testing.T) {
 			"data": [
 				{ "embedding": %s }
 			]
-		}`, toString(vector)))
+		}`, testsupport.VectorToString(vector)))
 	})
 	defer testsupport.StopTestServer(t, server)
 
@@ -41,19 +40,4 @@ func TestAnalyzer_Analyze(t *testing.T) {
 	chunk1, err := embeddingsGateway.FindSimilar(testsupport.CreateVector(0))
 	assert.NoError(t, err)
 	assert.Equal(t, analyzer.CitedChunkRecord{Content: "chunk1", Source: "https://example.com"}, chunk1)
-}
-
-func toString(vector []float32) string {
-	builder := strings.Builder{}
-
-	builder.WriteString("[")
-	for i, v := range vector {
-		builder.WriteString(fmt.Sprint(v))
-		if i < len(vector)-1 {
-			builder.WriteString(", ")
-		}
-	}
-	builder.WriteString("]")
-
-	return builder.String()
 }

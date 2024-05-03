@@ -1,7 +1,27 @@
 package testsupport
 
+import (
+	"fmt"
+	"strings"
+)
+
 func CreateVector(oneIndex int) []float32 {
 	embedding := make([]float32, 3072)
 	embedding[oneIndex] = 1
 	return embedding
+}
+
+func VectorToString(vector []float32) string {
+	builder := strings.Builder{}
+
+	builder.WriteString("[")
+	for i, v := range vector {
+		builder.WriteString(fmt.Sprint(v))
+		if i < len(vector)-1 {
+			builder.WriteString(", ")
+		}
+	}
+	builder.WriteString("]")
+
+	return builder.String()
 }
