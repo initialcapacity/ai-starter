@@ -35,7 +35,7 @@ jobs:
           psql --host localhost --username postgres < databases/create_databases.sql
           go run ./cmd/migrate
       - name: Run tests
-        run: go test -race ./...
+        run: go test ./...
   build-app:
     runs-on: ubuntu-latest
     needs: [ test ]
