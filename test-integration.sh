@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-HOST=localhost
-EXIT_CODE=0
-FEEDS=http://localhost:8123
-DATABASE_URL="postgres://starter:starter@localhost:5432/starter_integration?sslmode=disable"
+export HOST=localhost
+export EXIT_CODE=0
+export FEEDS=http://localhost:8123
+export DATABASE_URL="postgres://starter:starter@localhost:5432/starter_integration?sslmode=disable"
 
 echo "PROGRESS - creating databases"
 psql postgres < ./databases/create_databases.sql
