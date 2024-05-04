@@ -71,7 +71,7 @@ jobs:
         run: ./test-integration.sh
   build-app:
     runs-on: ubuntu-latest
-    needs: [ test ]
+    needs: [ test, integration-test ]
     permissions:
       contents: "read"
       id-token: "write"
