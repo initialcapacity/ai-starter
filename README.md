@@ -113,3 +113,12 @@ flowchart LR
     go run ./cmd/analyzer
     go run ./cmd/app
     ```
+
+## Integration tests
+
+The integration test script runs the collector and analyzer, then tests the app against the production OpenAI API.
+
+```shell
+source .env
+./test-integration.sh
+```
