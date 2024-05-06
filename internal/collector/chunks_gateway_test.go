@@ -12,7 +12,6 @@ import (
 func TestChunksGateway_Save(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
 	defer testDb.Close()
-	testDb.ClearTables()
 
 	gateway := collector.NewChunksGateway(testDb.DB)
 
@@ -30,7 +29,6 @@ func TestChunksGateway_Save(t *testing.T) {
 func TestChunksGateway_Get(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
 	defer testDb.Close()
-	testDb.ClearTables()
 
 	gateway := collector.NewChunksGateway(testDb.DB)
 

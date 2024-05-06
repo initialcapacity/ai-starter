@@ -22,6 +22,8 @@ func NewTestDb(t *testing.T) *TestDb {
 		assert.NoError(t, err, "unable to create test database")
 	})
 
+	println("created test database: " + testDbName)
+
 	return &TestDb{
 		DB:         dbsupport.CreateConnection(fmt.Sprintf("postgres://starter:starter@localhost:5432/%s?sslmode=disable", testDbName)),
 		t:          t,
@@ -37,12 +39,6 @@ func (tdb *TestDb) Close() {
 		_, err = superDb.Exec(fmt.Sprintf("drop database %s", tdb.testDbName))
 		assert.NoError(tdb.t, err, "unable to drop test database")
 	})
-}
-
-func (tdb *TestDb) ClearTables() {
-	tdb.Execute("delete from embeddings")
-	tdb.Execute("delete from chunks")
-	tdb.Execute("delete from data")
 }
 
 func (tdb *TestDb) Execute(statement string, arguments ...any) {

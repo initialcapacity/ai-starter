@@ -24,7 +24,6 @@ func TestAnalyzer_Analyze(t *testing.T) {
 
 	testDb := testsupport.NewTestDb(t)
 	defer testDb.Close()
-	testDb.ClearTables()
 
 	embeddingsGateway := analyzer.NewEmbeddingsGateway(testDb.DB)
 	chunksGateway := collector.NewChunksGateway(testDb.DB)

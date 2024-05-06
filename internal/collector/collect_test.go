@@ -34,7 +34,6 @@ func TestCollector_Collect(t *testing.T) {
 
 	testDb := testsupport.NewTestDb(t)
 	defer testDb.Close()
-	testDb.ClearTables()
 	client := http.Client{}
 
 	extractor := feedsupport.NewExtractor(client)

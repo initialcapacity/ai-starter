@@ -13,7 +13,6 @@ import (
 func TestEmbeddingsGateway_UnprocessedIds(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
 	defer testDb.Close()
-	testDb.ClearTables()
 
 	gateway := analyzer.NewEmbeddingsGateway(testDb.DB)
 
@@ -32,7 +31,6 @@ func TestEmbeddingsGateway_UnprocessedIds(t *testing.T) {
 func TestEmbeddingsGateway_Save(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
 	defer testDb.Close()
-	testDb.ClearTables()
 
 	gateway := analyzer.NewEmbeddingsGateway(testDb.DB)
 
@@ -52,7 +50,6 @@ func TestEmbeddingsGateway_Save(t *testing.T) {
 func TestEmbeddingsGateway_FindSimilar(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
 	defer testDb.Close()
-	testDb.ClearTables()
 
 	gateway := analyzer.NewEmbeddingsGateway(testDb.DB)
 
