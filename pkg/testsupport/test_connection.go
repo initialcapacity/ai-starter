@@ -18,11 +18,8 @@ type TestDb struct {
 func NewTestDb(t *testing.T) *TestDb {
 	testDbName := fmt.Sprintf("starter_test_%d", rand.IntN(1_000_000))
 	withSuperDb(t, func(superDb *sql.DB) {
-
 		_, err := superDb.Exec(fmt.Sprintf("create database %s template starter_test", testDbName))
 		assert.NoError(t, err, "unable to create test database")
-		_, err = superDb.Exec(fmt.Sprintf("grant all privileges on database %s to starter", testDbName))
-		assert.NoError(t, err, "unable to grant permissions for test database")
 	})
 
 	return &TestDb{
