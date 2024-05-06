@@ -36,10 +36,6 @@ jobs:
           go run ./cmd/migrate
       - name: Run tests
         run: go test ./...
-      - name: Run integration tests
-        env:
-          OPEN_AI_KEY: ${{ secrets.OPEN_AI_KEY }}
-        run: ./test-integration.sh
   integration-test:
     runs-on: ubuntu-latest
     services:
