@@ -11,7 +11,8 @@ import (
 
 func main() {
 	databaseUrl := websupport.RequireEnvironmentVariable[string]("DATABASE_URL")
-	migration, err := migrate.New("file://./databases/starter", databaseUrl)
+	migrationsLocation := websupport.EnvironmentVariable("MIGRATIONS_LOCATION", "file://./databases/starter")
+	migration, err := migrate.New(migrationsLocation, databaseUrl)
 	if err != nil {
 		log.Fatalf("failed to connect to %s, %s", databaseUrl, err)
 	}

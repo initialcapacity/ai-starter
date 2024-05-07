@@ -59,12 +59,14 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install --yes postgresql-client
+      - name: Create database user
+        run: |
+          psql --host localhost --username postgres < databases/create_databases.sql
       - name: Run integration tests
         env:
-          PGHOST: localhost
-          PGUSER: postgres
           OPEN_AI_KEY: ${{ secrets.OPEN_AI_KEY }}
-        run: ./test-integration.sh
+        run: |
+          go test ./cmd/integrationtest -tags=integration
   build-app:
     runs-on: ubuntu-latest
     needs: [ test, integration-test ]
