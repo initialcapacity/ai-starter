@@ -10,14 +10,7 @@ import (
 
 func TestParser_AllLinks(t *testing.T) {
 	endpoint, server := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
-		testsupport.Handle(mux, "/", `
-				<rss>
-					<channel>
-						<item><link>https://example.com/1</link></item>
-						<item><link>https://example.com/2</link></item>
-					</channel>
-				</rss>
-			`)
+		testsupport.RssFeed(mux, "https://example.com")
 	})
 	defer testsupport.StopTestServer(t, server)
 	parser := feedsupport.NewParser(http.Client{})
@@ -25,5 +18,5 @@ func TestParser_AllLinks(t *testing.T) {
 	links, err := parser.AllLinks(endpoint)
 
 	assert.NoError(t, err)
-	assert.Equal(t, []string{"https://example.com/1", "https://example.com/2"}, links)
+	assert.Equal(t, []string{"https://example.com/pickles", "https://example.com/chicken"}, links)
 }

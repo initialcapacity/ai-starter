@@ -13,17 +13,8 @@ func main() {
 	port := websupport.EnvironmentVariable("PORT", 8123)
 
 	server := websupport.NewServer(func(mux *http.ServeMux) {
-		testsupport.Handle(mux, "GET /", fmt.Sprintf(`
-			<rss>
-				<channel>
-					<item><link>http://%s:%d/pickles</link></item>
-					<item><link>http://%s:%d/chicken</link></item>
-				</channel>
-			</rss>
-		`, host, port, host, port))
-
-		testsupport.Handle(mux, "GET /chicken", "This is a page about chickens. Chickens have feathers and lay eggs.")
-		testsupport.Handle(mux, "GET /pickles", "This is a page about pickles. Pickles are a green and salty snack.")
+		testsupport.RssFeed(mux, fmt.Sprintf("http://%s:%d", host, port))
+		testsupport.Articles(mux)
 	})
 
 	_, done := server.Start(host, port)
