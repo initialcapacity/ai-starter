@@ -12,3 +12,10 @@ func HandleCreateEmbedding[T Number](mux *http.ServeMux, vector []T) {
 			]
 		}`, VectorToString(vector)))
 }
+
+func HandleGetCompletion(mux *http.ServeMux, response string) {
+	mux.HandleFunc("POST /chat/completions", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write(Stream(fmt.Sprintf(`{ "choices": [ { "delta": { "role": "assistant", "content": "%s" } } ] }`, response)))
+	})
+}

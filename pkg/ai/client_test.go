@@ -24,11 +24,7 @@ func TestClient_CreateEmbedding(t *testing.T) {
 
 func TestClient_GetChatCompletion(t *testing.T) {
 	endpoint, server := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
-		mux.HandleFunc("/chat/completions", func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(http.StatusOK)
-			_, err := w.Write(testsupport.Stream(`{ "choices": [ { "delta": { "role": "assistant", "content": "Sounds good" } } ] }`))
-			assert.NoError(t, err)
-		})
+		testsupport.HandleGetCompletion(mux, "Sounds good")
 	})
 	defer testsupport.StopTestServer(t, server)
 

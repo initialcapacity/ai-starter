@@ -31,11 +31,7 @@ func TestIndex_Get(t *testing.T) {
 
 func TestIndex_Post(t *testing.T) {
 	aiEndpoint, aiServer := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
-		mux.HandleFunc("/chat/completions", func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(http.StatusOK)
-			_, err := w.Write(testsupport.Stream(`{ "choices": [ { "delta": { "role": "assistant", "content": "Sounds good" } } ] }`))
-			assert.NoError(t, err)
-		})
+		testsupport.HandleGetCompletion(mux, "Sounds good")
 		testsupport.HandleCreateEmbedding(mux, testsupport.CreateVector(0))
 	})
 	defer testsupport.StopTestServer(t, aiServer)
