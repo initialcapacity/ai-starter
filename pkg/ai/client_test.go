@@ -11,11 +11,7 @@ import (
 
 func TestClient_CreateEmbedding(t *testing.T) {
 	endpoint, server := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
-		testsupport.Handle(mux, "/embeddings", `{
-				"data": [
-					{ "embedding": [1, 2, 3, 4] }
-				]
-			}`)
+		testsupport.HandleCreateEmbedding(mux, []int{1, 2, 3, 4})
 	})
 	defer testsupport.StopTestServer(t, server)
 

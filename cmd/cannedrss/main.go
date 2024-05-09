@@ -13,8 +13,8 @@ func main() {
 	port := websupport.EnvironmentVariable("PORT", 8123)
 
 	server := websupport.NewServer(func(mux *http.ServeMux) {
-		testsupport.RssFeed(mux, fmt.Sprintf("http://%s:%d", host, port))
-		testsupport.Articles(mux)
+		testsupport.HandleRssFeed(mux, fmt.Sprintf("http://%s:%d", host, port))
+		testsupport.HandleArticles(mux)
 	})
 
 	_, done := server.Start(host, port)

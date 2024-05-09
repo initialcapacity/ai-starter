@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func RssFeed(mux *http.ServeMux, articlesEndpoint string) {
+func HandleRssFeed(mux *http.ServeMux, articlesEndpoint string) {
 	Handle(mux, "GET /", fmt.Sprintf(`
 			<rss>
 				<channel>
@@ -16,7 +16,7 @@ func RssFeed(mux *http.ServeMux, articlesEndpoint string) {
 		`, articlesEndpoint, articlesEndpoint))
 }
 
-func Articles(mux *http.ServeMux) {
+func HandleArticles(mux *http.ServeMux) {
 	Handle(mux, "GET /chicken", "This is a page about chickens. Chickens have feathers and lay eggs.")
 	Handle(mux, "GET /pickles", "This is a page about pickles. Pickles are a green and salty snack.")
 }

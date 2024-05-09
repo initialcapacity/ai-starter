@@ -2,6 +2,7 @@ package testsupport
 
 import (
 	"fmt"
+	"golang.org/x/exp/constraints"
 	"strings"
 )
 
@@ -11,7 +12,11 @@ func CreateVector(oneIndex int) []float32 {
 	return embedding
 }
 
-func VectorToString(vector []float32) string {
+type Number interface {
+	constraints.Integer | constraints.Float
+}
+
+func VectorToString[T Number](vector []T) string {
 	builder := strings.Builder{}
 
 	builder.WriteString("[")

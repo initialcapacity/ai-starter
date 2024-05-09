@@ -36,11 +36,7 @@ func TestIndex_Post(t *testing.T) {
 			_, err := w.Write(testsupport.Stream(`{ "choices": [ { "delta": { "role": "assistant", "content": "Sounds good" } } ] }`))
 			assert.NoError(t, err)
 		})
-		testsupport.Handle(mux, "/embeddings", fmt.Sprintf(`{
-				"data": [
-					{ "embedding": %s }
-				]
-			}`, testsupport.VectorToString(testsupport.CreateVector(0))))
+		testsupport.HandleCreateEmbedding(mux, testsupport.CreateVector(0))
 	})
 	defer testsupport.StopTestServer(t, aiServer)
 

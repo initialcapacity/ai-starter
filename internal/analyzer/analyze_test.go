@@ -2,7 +2,6 @@ package analyzer_test
 
 import (
 	"context"
-	"fmt"
 	"github.com/initialcapacity/ai-starter/internal/analyzer"
 	"github.com/initialcapacity/ai-starter/internal/collector"
 	"github.com/initialcapacity/ai-starter/pkg/testsupport"
@@ -14,11 +13,7 @@ import (
 func TestAnalyzer_Analyze(t *testing.T) {
 	vector := testsupport.CreateVector(0)
 	endpoint, server := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
-		testsupport.Handle(mux, "/embeddings", fmt.Sprintf(`{
-			"data": [
-				{ "embedding": %s }
-			]
-		}`, testsupport.VectorToString(vector)))
+		testsupport.HandleCreateEmbedding(mux, vector)
 	})
 	defer testsupport.StopTestServer(t, server)
 

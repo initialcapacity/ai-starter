@@ -12,6 +12,7 @@ require (
 	github.com/pgvector/pgvector-go v0.1.1
 	github.com/stretchr/testify v1.8.4
 	github.com/tiktoken-go/tokenizer v0.1.0
+	golang.org/x/exp v0.0.0-20230315142452-642cacee5cc0
 	golang.org/x/net v0.21.0
 )
 
