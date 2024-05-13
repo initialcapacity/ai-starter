@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/initialcapacity/ai-starter/internal/collector"
-	ai2 "github.com/initialcapacity/ai-starter/pkg/ai"
+	"github.com/initialcapacity/ai-starter/pkg/ai"
 	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
 	"github.com/initialcapacity/ai-starter/pkg/feedsupport"
 	"github.com/initialcapacity/ai-starter/pkg/websupport"
@@ -23,9 +23,9 @@ func main() {
 	parser := feedsupport.NewParser(client)
 	extractor := feedsupport.NewExtractor(client)
 	dataGateway := collector.NewDataGateway(db)
-	t := ai2.NewTokenizer(tokenizer.Cl100kBase)
+	t := ai.NewTokenizer(tokenizer.Cl100kBase)
 	chunksGateway := collector.NewChunksGateway(db)
-	chunker := ai2.NewChunker(t, 6000)
+	chunker := ai.NewChunker(t, 6000)
 	chunksService := collector.NewChunksService(chunker, chunksGateway)
 
 	c := collector.New(parser, extractor, dataGateway, chunksService)
