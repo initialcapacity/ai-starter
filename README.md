@@ -1,6 +1,6 @@
 # AI Starter
 
-A starter application that shows data collection, embedding creation and querying, and text completion with OpenAI.
+A starter application that shows a data collector architecture for [retrieval augmented generation](https://en.wikipedia.org/wiki/Prompt_engineering#Retrieval-augmented_generation).
 
 ## Technology stack
 
