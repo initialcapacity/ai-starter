@@ -39,7 +39,7 @@ func (client Client) CreateEmbedding(ctx context.Context, text string) ([]float3
 }
 
 func (client Client) GetChatCompletion(ctx context.Context, messages []ChatMessage) (chan string, error) {
-	model := "gpt-4-turbo"
+	model := "gpt-4o"
 	chatResponse, streamError := client.OpenAiClient.GetChatCompletionsStream(ctx, azopenai.ChatCompletionsOptions{
 		Messages:       toOpenAiMessages(messages),
 		DeploymentName: &model,
