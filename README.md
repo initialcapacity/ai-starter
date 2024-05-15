@@ -21,13 +21,31 @@ The AI Starter consists of three applications communicating with one Postgres da
 1.  The data analyzer is another background process that processes collected data.
 1.  The web application collects a query from the user and displays a result to the user.
 
-### Collection and Analysis
+```mermaid
+flowchart LR
+    embeddings([OpenAI embeddings])
+    user((User))
+    app["Web App\n(Cloud Run)"]
+    db[("PostgreSQL\n(+pgvector)")]
+    llm([OpenAI completion])
+    
+    user -- query --> app
+    app -- create embedding --> embeddings
+    app -- search embeddings --> db
+    app -- retrieve documents --> db
+    app -- fetch text completion --> llm
 
-The data collector fetches documents from RSS feeds sources and stores the document text in the database.
-It also splits documents into chunks of less than 6000 tokens to ensure embedding and text completion calls stay below
-their token limits.
-The data analyzer sends document chunks to the [OpenAI Embeddings API](https://platform.openai.com/docs/guides/embeddings)
-and uses pgvector to store the embeddings in PostgreSQL.
+    classDef node font-weight:bold,color:white,stroke:black,stroke-width:2px;
+    classDef app fill:#3185FC;
+    classDef db fill:#B744B8;
+    classDef external fill:#FA9F42;
+    classDef user fill:#ED6A5A;
+
+    class app,collector,analyzer app;
+    class db db;
+    class docs,embeddings,llm external;
+    class user user;
+```
 
 ```mermaid
 flowchart LR
@@ -55,37 +73,19 @@ flowchart LR
     class user user;
 ```
 
+### Collection and Analysis
+
+The data collector fetches documents from RSS feeds sources and stores the document text in the database.
+It also splits documents into chunks of less than 6000 tokens to ensure embedding and text completion calls stay below
+their token limits.
+The data analyzer sends document chunks to the [OpenAI Embeddings API](https://platform.openai.com/docs/guides/embeddings)
+and uses pgvector to store the embeddings in PostgreSQL.
+
 ### Web Application
 
 The web application collects the user's query and creates an embedding with the OpenAI Embeddings API.
 It then searches the PostgreSQL for similar embeddings (using pgvector) and provides the corresponding chunk of text as
 context for a query to the [OpenAI Chat Completion API](https://platform.openai.com/docs/api-reference/chat).
-
-```mermaid
-flowchart LR
-    embeddings([OpenAI embeddings])
-    user((User))
-    app["Web App\n(Cloud Run)"]
-    db[("PostgreSQL\n(+pgvector)")]
-    llm([OpenAI completion])
-    
-    user -- query --> app
-    app -- create embedding --> embeddings
-    app -- search embeddings --> db
-    app -- retrieve documents --> db
-    app -- fetch text completion --> llm
-
-    classDef node font-weight:bold,color:white,stroke:black,stroke-width:2px;
-    classDef app fill:#3185FC;
-    classDef db fill:#B744B8;
-    classDef external fill:#FA9F42;
-    classDef user fill:#ED6A5A;
-
-    class app,collector,analyzer app;
-    class db db;
-    class docs,embeddings,llm external;
-    class user user;
-```
 
 ## Local development
 
