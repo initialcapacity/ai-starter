@@ -12,6 +12,7 @@ import (
 
 func TestAnalyzer_Analyze(t *testing.T) {
 	vector := testsupport.CreateVector(0)
+
 	endpoint, server := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
 		testsupport.HandleCreateEmbedding(mux, vector)
 	})
@@ -20,18 +21,19 @@ func TestAnalyzer_Analyze(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
 	defer testDb.Close()
 
-	embeddingsGateway := analyzer.NewEmbeddingsGateway(testDb.DB)
-	chunksGateway := collector.NewChunksGateway(testDb.DB)
-
 	testDb.Execute("insert into data (id, source, content) values ('aaaaaaaa-2f3f-4bc9-8dba-ba397156cc16', 'https://example.com', 'some content')")
 	testDb.Execute("insert into chunks (id, data_id, content) values ('bbbbbbbb-2f3f-4bc9-8dba-ba397156cc16', 'aaaaaaaa-2f3f-4bc9-8dba-ba397156cc16','chunk1')")
 
-	a := analyzer.NewAnalyzer(chunksGateway, embeddingsGateway, testsupport.NewTestAiClient(endpoint))
+	embeddingsGateway := analyzer.NewEmbeddingsGateway(testDb.DB)
+	chunksGateway := collector.NewChunksGateway(testDb.DB)
+	aiClient := testsupport.NewTestAiClient(endpoint)
+
+	a := analyzer.NewAnalyzer(chunksGateway, embeddingsGateway, aiClient)
 
 	err := a.Analyze(context.Background())
 	assert.NoError(t, err)
 
-	chunk1, err := embeddingsGateway.FindSimilar(testsupport.CreateVector(0))
+	chunk, err := embeddingsGateway.FindSimilar(testsupport.CreateVector(0))
 	assert.NoError(t, err)
-	assert.Equal(t, analyzer.CitedChunkRecord{Content: "chunk1", Source: "https://example.com"}, chunk1)
+	assert.Equal(t, analyzer.CitedChunkRecord{Content: "chunk1", Source: "https://example.com"}, chunk)
 }
