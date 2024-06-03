@@ -5,18 +5,17 @@ import (
 	"errors"
 	"fmt"
 	"github.com/initialcapacity/ai-starter/internal/collector"
-	"github.com/initialcapacity/ai-starter/pkg/ai"
 	"log/slog"
 )
 
 type Analyzer struct {
 	chunksGateway     *collector.ChunksGateway
 	embeddingsGateway *EmbeddingsGateway
-	aiClient          ai.Client
+	embeddingCreator  embeddingCreator
 }
 
-func NewAnalyzer(chunksGateway *collector.ChunksGateway, embeddingsGateway *EmbeddingsGateway, aiClient ai.Client) *Analyzer {
-	return &Analyzer{chunksGateway: chunksGateway, embeddingsGateway: embeddingsGateway, aiClient: aiClient}
+func NewAnalyzer(chunksGateway *collector.ChunksGateway, embeddingsGateway *EmbeddingsGateway, embeddingCreator embeddingCreator) *Analyzer {
+	return &Analyzer{chunksGateway: chunksGateway, embeddingsGateway: embeddingsGateway, embeddingCreator: embeddingCreator}
 }
 
 func (a *Analyzer) Analyze(ctx context.Context) error {
@@ -38,7 +37,7 @@ func (a *Analyzer) Analyze(ctx context.Context) error {
 		}
 
 		slog.Info("fetching embedding for", "id", id)
-		embedding, err := a.aiClient.CreateEmbedding(ctx, record.Content)
+		embedding, err := a.embeddingCreator.CreateEmbedding(ctx, record.Content)
 		if err != nil {
 			idErrors = append(idErrors, fmt.Errorf("error fetching embedding for id=%s: %w", id, err))
 			continue
@@ -52,4 +51,8 @@ func (a *Analyzer) Analyze(ctx context.Context) error {
 	}
 
 	return errors.Join(idErrors...)
+}
+
+type embeddingCreator interface {
+	CreateEmbedding(ctx context.Context, text string) ([]float32, error)
 }
