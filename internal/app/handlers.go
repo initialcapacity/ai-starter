@@ -10,10 +10,11 @@ import (
 
 func Handlers(aiClient ai.Client, db *sql.DB) func(mux *http.ServeMux) {
 	embeddingsGateway := analyzer.NewEmbeddingsGateway(db)
+	queryService := NewQueryService(embeddingsGateway, aiClient)
 
 	return func(mux *http.ServeMux) {
 		mux.HandleFunc("GET /", Index())
-		mux.HandleFunc("POST /", Query(aiClient, embeddingsGateway))
+		mux.HandleFunc("POST /", Query(queryService))
 		mux.HandleFunc("GET /health", Health)
 
 		static, _ := fs.Sub(Resources, "resources/static")
