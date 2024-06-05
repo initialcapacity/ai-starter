@@ -22,8 +22,6 @@ func NewTestDb(t *testing.T) *TestDb {
 		assert.NoError(t, err, "unable to create test database")
 	})
 
-	println("created test database: " + testDbName)
-
 	return &TestDb{
 		DB:         dbsupport.CreateConnection(fmt.Sprintf("postgres://starter:starter@localhost:5432/%s?sslmode=disable", testDbName)),
 		t:          t,
