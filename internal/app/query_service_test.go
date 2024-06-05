@@ -72,16 +72,16 @@ type fakeAi struct {
 }
 
 func (f fakeAi) CreateEmbedding(_ context.Context, _ string) ([]float32, error) {
-	if f.completionError != nil {
-		return nil, f.completionError
+	if f.embeddingError != nil {
+		return nil, f.embeddingError
 	}
 
 	return testsupport.CreateVector(0), nil
 }
 
 func (f fakeAi) GetChatCompletion(_ context.Context, _ []ai.ChatMessage) (chan string, error) {
-	if f.embeddingError != nil {
-		return nil, f.embeddingError
+	if f.completionError != nil {
+		return nil, f.completionError
 	}
 
 	response := make(chan string)
