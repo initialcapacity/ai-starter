@@ -25,8 +25,8 @@ The AI Starter consists of three applications communicating with one Postgres da
 flowchart LR
     embeddings([OpenAI embeddings])
     user((User))
-    app["Web App\n(Cloud Run)"]
-    db[("PostgreSQL\n(+pgvector)")]
+    app["Web App (Cloud Run)"]
+    db[("PostgreSQL + pgvector)")]
     llm([OpenAI completion])
     
     user -- query --> app
@@ -51,9 +51,9 @@ flowchart LR
 flowchart LR
     embeddings([OpenAI embeddings])
     docs(["RSS feeds"])
-    db[("PostgreSQL\n(+pgvector)")]
-    collector["Data Collector\n(Cloud Function)"]
-    analyzer["Data Analyzer\n(Cloud Function)"]
+    db[("PostgreSQL + pgvector)")]
+    collector["Data Collector (Cloud Function)"]
+    analyzer["Data Analyzer (Cloud Function)"]
     
     collector -- fetch documents --> docs
     collector -- save documents --> db
