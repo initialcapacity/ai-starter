@@ -26,7 +26,7 @@ flowchart LR
     embeddings([OpenAI embeddings])
     user((User))
     app["Web App (Cloud Run)"]
-    db[("PostgreSQL + pgvector)")]
+    db[("PostgreSQL + pgvector")]
     llm([OpenAI completion])
     
     user -- query --> app
@@ -51,7 +51,7 @@ flowchart LR
 flowchart LR
     embeddings([OpenAI embeddings])
     docs(["RSS feeds"])
-    db[("PostgreSQL + pgvector)")]
+    db[("PostgreSQL + pgvector")]
     collector["Data Collector (Cloud Function)"]
     analyzer["Data Analyzer (Cloud Function)"]
     
