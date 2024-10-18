@@ -1,6 +1,6 @@
 module github.com/initialcapacity/ai-starter
 
-go 1.22.2
+go 1.23.2
 
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/ai/azopenai v0.5.1
