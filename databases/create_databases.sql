@@ -1,5 +1,6 @@
 drop database if exists starter_test;
 drop database if exists starter_development;
+drop database if exists starter_integration;
 drop user starter;
 drop user super_test;
 
