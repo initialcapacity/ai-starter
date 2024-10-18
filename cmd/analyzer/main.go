@@ -27,6 +27,6 @@ func main() {
 	if err == nil {
 		slog.Info("successful analysis")
 	} else {
-		slog.Error("unsuccessful analysis: %w", err)
+		slog.Error("unsuccessful analysis: %w", slog.Any("error", err))
 	}
 }

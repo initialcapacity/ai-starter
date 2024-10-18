@@ -20,13 +20,13 @@ func NewQueryService(embeddingsGateway *analyzer.EmbeddingsGateway, aiClient aiC
 func (q *QueryService) FetchResponse(ctx context.Context, query string) (QueryResult, error) {
 	embedding, err := q.aiClient.CreateEmbedding(ctx, query)
 	if err != nil {
-		slog.Error("unable to create embedding", err)
+		slog.Error("unable to create embedding", slog.Any("error", err))
 		return QueryResult{}, err
 	}
 
 	record, err := q.embeddingsGateway.FindSimilar(embedding)
 	if err != nil {
-		slog.Error("unable to find similar embedding", err)
+		slog.Error("unable to find similar embedding", slog.Any("error", err))
 		return QueryResult{}, err
 	}
 
@@ -37,7 +37,7 @@ func (q *QueryService) FetchResponse(ctx context.Context, query string) (QueryRe
 		{Role: ai.User, Content: query},
 	})
 	if err != nil {
-		slog.Error("unable fetch chat completion", err)
+		slog.Error("unable fetch chat completion", slog.Any("error", err))
 		return QueryResult{}, err
 	}
 

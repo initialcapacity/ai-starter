@@ -23,7 +23,7 @@ func Query(queryService *QueryService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		err := r.ParseForm()
 		if err != nil {
-			slog.Error("unable to parse form", err)
+			slog.Error("unable to parse form", slog.Any("error", err))
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}

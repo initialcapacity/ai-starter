@@ -35,6 +35,6 @@ func main() {
 	if err == nil {
 		slog.Info("successful collection")
 	} else {
-		slog.Error("unsuccessful collection: %w", err)
+		slog.Error("unsuccessful collection: %w", slog.Any("error", err))
 	}
 }
