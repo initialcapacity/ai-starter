@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/Azure/azure-sdk-for-go/sdk/ai/azopenai"
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore"
+	"github.com/Azure/azure-sdk-for-go/sdk/azcore/to"
 	"io"
 	"log"
 	"log/slog"
@@ -40,7 +41,7 @@ func (client Client) CreateEmbedding(ctx context.Context, text string) ([]float3
 
 func (client Client) GetChatCompletion(ctx context.Context, messages []ChatMessage) (chan string, error) {
 	model := "gpt-4o"
-	chatResponse, streamError := client.OpenAiClient.GetChatCompletionsStream(ctx, azopenai.ChatCompletionsOptions{
+	chatResponse, streamError := client.OpenAiClient.GetChatCompletionsStream(ctx, azopenai.ChatCompletionsStreamOptions{
 		Messages:       toOpenAiMessages(messages),
 		DeploymentName: &model,
 	}, nil)
@@ -75,6 +76,27 @@ func (client Client) GetChatCompletion(ctx context.Context, messages []ChatMessa
 	return response, nil
 }
 
+func (client Client) GetJsonChatCompletion(ctx context.Context, messages []ChatMessage, schemaName string, schemaDescription string, jsonSchema string) (string, error) {
+	model := "gpt-4o"
+	chatResponse, err := client.OpenAiClient.GetChatCompletions(ctx, azopenai.ChatCompletionsOptions{
+		Messages:       toOpenAiMessages(messages),
+		DeploymentName: &model,
+		ResponseFormat: &azopenai.ChatCompletionsJSONSchemaResponseFormat{
+			JSONSchema: &azopenai.ChatCompletionsJSONSchemaResponseFormatJSONSchema{
+				Name:        &schemaName,
+				Description: &schemaDescription,
+				Schema:      []byte(jsonSchema),
+				Strict:      to.Ptr(true),
+			},
+		},
+	}, nil)
+	if err != nil {
+		return "", fmt.Errorf("unable to get JSON completions: %w", err)
+	}
+
+	return *chatResponse.ChatCompletions.Choices[0].Message.Content, nil
+}
+
 type Role string
 
 const (
@@ -95,7 +117,7 @@ func toOpenAiMessages(messages []ChatMessage) []azopenai.ChatRequestMessageClass
 		if message.Role == User {
 			result = append(result, &azopenai.ChatRequestUserMessage{Content: azopenai.NewChatRequestUserMessageContent(message.Content)})
 		} else if message.Role == System {
-			result = append(result, &azopenai.ChatRequestSystemMessage{Content: &message.Content})
+			result = append(result, &azopenai.ChatRequestSystemMessage{Content: azopenai.NewChatRequestSystemMessageContent(message.Content)})
 		}
 	}
 

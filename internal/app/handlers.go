@@ -3,6 +3,7 @@ package app
 import (
 	"database/sql"
 	"github.com/initialcapacity/ai-starter/internal/analyzer"
+	"github.com/initialcapacity/ai-starter/internal/query"
 	"github.com/initialcapacity/ai-starter/pkg/ai"
 	"io/fs"
 	"net/http"
@@ -10,7 +11,7 @@ import (
 
 func Handlers(aiClient ai.Client, db *sql.DB) func(mux *http.ServeMux) {
 	embeddingsGateway := analyzer.NewEmbeddingsGateway(db)
-	queryService := NewQueryService(embeddingsGateway, aiClient)
+	queryService := query.NewService(embeddingsGateway, aiClient)
 
 	return func(mux *http.ServeMux) {
 		mux.HandleFunc("GET /", Index())

@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/initialcapacity/ai-starter/internal/query"
 	"github.com/initialcapacity/ai-starter/pkg/deferrable"
 	"github.com/initialcapacity/ai-starter/pkg/websupport"
 	"log/slog"
@@ -19,7 +20,7 @@ type model struct {
 	Source   string
 }
 
-func Query(queryService *QueryService) http.HandlerFunc {
+func Query(queryService *query.Service) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		err := r.ParseForm()
 		if err != nil {

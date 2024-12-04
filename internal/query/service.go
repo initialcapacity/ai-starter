@@ -1,4 +1,4 @@
-package app
+package query
 
 import (
 	"context"
@@ -8,16 +8,16 @@ import (
 	"log/slog"
 )
 
-type QueryService struct {
+type Service struct {
 	embeddingsGateway *analyzer.EmbeddingsGateway
 	aiClient          aiClient
 }
 
-func NewQueryService(embeddingsGateway *analyzer.EmbeddingsGateway, aiClient aiClient) *QueryService {
-	return &QueryService{embeddingsGateway: embeddingsGateway, aiClient: aiClient}
+func NewService(embeddingsGateway *analyzer.EmbeddingsGateway, aiClient aiClient) *Service {
+	return &Service{embeddingsGateway: embeddingsGateway, aiClient: aiClient}
 }
 
-func (q *QueryService) FetchResponse(ctx context.Context, query string) (QueryResult, error) {
+func (q *Service) FetchResponse(ctx context.Context, query string) (QueryResult, error) {
 	embedding, err := q.aiClient.CreateEmbedding(ctx, query)
 	if err != nil {
 		slog.Error("unable to create embedding", slog.Any("error", err))

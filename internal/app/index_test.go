@@ -31,7 +31,7 @@ func TestIndex_Get(t *testing.T) {
 
 func TestIndex_Post(t *testing.T) {
 	aiEndpoint, aiServer := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
-		testsupport.HandleGetCompletion(mux, "Sounds good")
+		testsupport.HandleGetStreamCompletion(mux, "Sounds good")
 		testsupport.HandleCreateEmbedding(mux, testsupport.CreateVector(0))
 	})
 	defer testsupport.StopTestServer(t, aiServer)
