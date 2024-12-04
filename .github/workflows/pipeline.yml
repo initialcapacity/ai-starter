@@ -103,7 +103,7 @@ jobs:
           go run ./cmd/analyzer
           go run ./cmd/evaluator
       - name: Save artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: scores
           path: scores.csv
