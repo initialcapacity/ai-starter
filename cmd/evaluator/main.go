@@ -5,11 +5,10 @@ import (
 	"github.com/initialcapacity/ai-starter/internal/evaluation"
 	"github.com/initialcapacity/ai-starter/internal/query"
 	"github.com/initialcapacity/ai-starter/pkg/ai"
-	"github.com/initialcapacity/ai-starter/pkg/csvsupport"
+	"github.com/initialcapacity/ai-starter/pkg/channelsupport"
 	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
 	"github.com/initialcapacity/ai-starter/pkg/websupport"
 	"log"
-	"os"
 )
 
 func main() {
@@ -40,20 +39,12 @@ func main() {
 	reporter := evaluation.NewScoreReporter()
 
 	results := retriever.Retrieve(queries)
-	scores := scoreRunner.Score(results)
-	lines := reporter.Report(scores)
+	scores := channelsupport.CollectSlice(scoreRunner.Score(results))
 
-	csvFile, err := os.Create("scores.csv")
-	defer csvFile.Close()
+	err := reporter.WriteToCSV("scores.csv", reporter.Report(scores))
 	if err != nil {
-		log.Fatalln("failed to open file", err)
+		log.Fatalln("failed to write scores.csv", err)
 	}
-
-	csvHeader := []string{"Query", "Response", "Source", "Relevance", "Correctness", "Appropriate Tone", "Politeness"}
-	err = csvsupport.WriteCSV(csvFile, csvHeader, lines)
-	if err != nil {
-		log.Fatalln("failed to write csv", err)
-	}
-
 	log.Println("successfully wrote scores.csv")
+
 }
