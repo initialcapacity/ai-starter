@@ -99,9 +99,9 @@ jobs:
           FEEDS: "https://feed.infoq.com/development/,https://blog.jetbrains.com/feed/,https://feed.infoq.com/Devops/,https://feed.infoq.com/architecture-design/"
           DATABASE_URL: "postgres://starter:starter@localhost:5432/starter_development?sslmode=disable"
         run: |
-          go test ./cmd/collect
-          go test ./cmd/analyze
-          go test ./cmd/evaluate
+          go run ./cmd/collector
+          go run ./cmd/analyzer
+          go run ./cmd/evaluator
       - name: Save artifact
         uses: actions/upload-artifact@v3
         with:
