@@ -9,20 +9,19 @@ import (
 func TestScoreRunner_Score(t *testing.T) {
 	runner := evaluation.NewScoreRunner(FakeScorer{})
 	responses := make(chan evaluation.ChatResponse)
-	scores := runner.Score(responses)
+	results := runner.Score(responses)
 
-	responses <- evaluation.ChatResponse{
-		Query:    "How are you?",
-		Response: "Good",
-		Source:   "https://me.example.com",
-	}
+	response := evaluation.ChatResponse{Query: "How are you?", Response: "Good", Source: "https://me.example.com"}
+	responses <- response
 
+	result := <-results
 	assert.Equal(t, evaluation.ResponseScore{
 		Relevance:       40,
 		Correctness:     50,
 		AppropriateTone: 60,
 		Politeness:      70,
-	}, <-scores)
+	}, result.Score)
+	assert.Equal(t, response, result.Response)
 }
 
 type FakeScorer struct {

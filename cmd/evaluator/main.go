@@ -31,14 +31,17 @@ func main() {
 	db := dbsupport.CreateConnection(databaseUrl)
 	embeddingsGateway := analyzer.NewEmbeddingsGateway(db)
 	queryService := query.NewService(embeddingsGateway, aiClient)
-	retriever := evaluation.NewChatResponseRetriever(queryService)
 	aiScorer := evaluation.NewAiScorer(aiClient)
+
+	retriever := evaluation.NewChatResponseRetriever(queryService)
 	scoreRunner := evaluation.NewScoreRunner(aiScorer)
+	reporter := evaluation.NewScoreReporter()
 
 	results := retriever.Retrieve(queries)
 	scores := scoreRunner.Score(results)
+	lines := reporter.Report(scores)
 
-	for score := range scores {
-		fmt.Printf("%+v\n", score)
+	for line := range lines {
+		fmt.Printf("%v\n", line)
 	}
 }
