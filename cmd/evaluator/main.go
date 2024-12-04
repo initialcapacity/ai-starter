@@ -1,13 +1,15 @@
 package main
 
 import (
-	"fmt"
 	"github.com/initialcapacity/ai-starter/internal/analyzer"
 	"github.com/initialcapacity/ai-starter/internal/evaluation"
 	"github.com/initialcapacity/ai-starter/internal/query"
 	"github.com/initialcapacity/ai-starter/pkg/ai"
+	"github.com/initialcapacity/ai-starter/pkg/csvsupport"
 	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
 	"github.com/initialcapacity/ai-starter/pkg/websupport"
+	"log"
+	"os"
 )
 
 func main() {
@@ -41,7 +43,17 @@ func main() {
 	scores := scoreRunner.Score(results)
 	lines := reporter.Report(scores)
 
-	for line := range lines {
-		fmt.Printf("%v\n", line)
+	csvFile, err := os.Create("scores.csv")
+	defer csvFile.Close()
+	if err != nil {
+		log.Fatalln("failed to open file", err)
 	}
+
+	csvHeader := []string{"Query", "Response", "Source", "Relevance", "Correctness", "Appropriate Tone", "Politeness"}
+	err = csvsupport.WriteCSV(csvFile, csvHeader, lines)
+	if err != nil {
+		log.Fatalln("failed to write csv", err)
+	}
+
+	log.Println("successfully wrote scores.csv")
 }
