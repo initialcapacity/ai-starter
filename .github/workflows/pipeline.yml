@@ -103,10 +103,10 @@ jobs:
           go test ./cmd/analyze
           go test ./cmd/evaluate
       - name: Save artifact
-          uses: actions/upload-artifact@v3
-          with:
-            name: scores
-            path: scores.csv
+        uses: actions/upload-artifact@v3
+        with:
+          name: scores
+          path: scores.csv
   build-app:
     runs-on: ubuntu-latest
     needs: [ test, integration-test, evaluate ]
