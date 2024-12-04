@@ -7,14 +7,14 @@ import (
 	"strconv"
 )
 
-type ScoreReporter struct {
+type CSVReporter struct {
 }
 
-func NewScoreReporter() ScoreReporter {
-	return ScoreReporter{}
+func NewCSVReporter() CSVReporter {
+	return CSVReporter{}
 }
 
-func (r ScoreReporter) WriteToCSV(filename string, lines [][]string) error {
+func (r CSVReporter) WriteToCSV(filename string, lines [][]string) error {
 	rows := [][]string{{"Query", "Response", "Source", "Relevance", "Correctness", "Appropriate Tone", "Politeness"}}
 	rows = append(rows, lines...)
 
@@ -27,7 +27,7 @@ func (r ScoreReporter) WriteToCSV(filename string, lines [][]string) error {
 	return csvsupport.WriteCSV(csvFile, rows)
 }
 
-func (r ScoreReporter) Report(results []ScoredResponse) [][]string {
+func (r CSVReporter) Lines(results []ScoredResponse) [][]string {
 	lines := make([][]string, 0)
 
 	for _, result := range results {

@@ -7,9 +7,9 @@ import (
 )
 
 func TestScoreReporter_Report(t *testing.T) {
-	reporter := evaluation.NewScoreReporter()
+	reporter := evaluation.NewCSVReporter()
 
-	lines := reporter.Report([]evaluation.ScoredResponse{{
+	lines := reporter.Lines([]evaluation.ScoredResponse{{
 		Response: evaluation.ChatResponse{Query: "What's up?", Response: "Nothing much", Source: "https://example.com"},
 		Score:    evaluation.ResponseScore{Relevance: 15, Correctness: 25, AppropriateTone: 35, Politeness: 45},
 	}})

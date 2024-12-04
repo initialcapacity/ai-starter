@@ -36,15 +36,21 @@ func main() {
 
 	retriever := evaluation.NewChatResponseRetriever(queryService)
 	scoreRunner := evaluation.NewScoreRunner(aiScorer)
-	reporter := evaluation.NewScoreReporter()
+	csvReporter := evaluation.NewCSVReporter()
+	mdReporter := evaluation.NewMarkdownReporter()
 
 	results := retriever.Retrieve(queries)
 	scores := channelsupport.CollectSlice(scoreRunner.Score(results))
 
-	err := reporter.WriteToCSV("scores.csv", reporter.Report(scores))
+	err := csvReporter.WriteToCSV("scores.csv", csvReporter.Lines(scores))
 	if err != nil {
 		log.Fatalln("failed to write scores.csv", err)
 	}
 	log.Println("successfully wrote scores.csv")
 
+	err = mdReporter.WriteToFile("scores.md", mdReporter.Report(scores))
+	if err != nil {
+		log.Fatalln("failed to write scores.md", err)
+	}
+	log.Println("successfully wrote scores.md")
 }
