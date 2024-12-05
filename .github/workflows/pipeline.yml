@@ -90,9 +90,12 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install --yes postgresql-client
-      - name: Create database user
+      - name: Create database user and run migrations
+        env:
+          DATABASE_URL: "postgres://starter:starter@localhost:5432/starter_development?sslmode=disable"
         run: |
           psql --host localhost --username postgres < databases/create_databases.sql
+          go run ./cmd/migrate
       - name: Run evaluation
         env:
           OPEN_AI_KEY: ${{ secrets.OPEN_AI_KEY }}
