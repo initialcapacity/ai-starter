@@ -1,5 +1,4 @@
 .gcloudignore
 .git
 .gitignore
-node_modules
 #!include:.gitignore
