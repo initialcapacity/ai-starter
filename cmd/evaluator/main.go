@@ -41,6 +41,9 @@ func main() {
 
 	results := retriever.Retrieve(queries)
 	scores := channelsupport.CollectSlice(scoreRunner.Score(results))
+	if len(scores) == 0 {
+		log.Fatalln("no scores were generated, there was likely a problem")
+	}
 
 	err := csvReporter.WriteToCSV("scores.csv", csvReporter.Lines(scores))
 	if err != nil {
