@@ -53,5 +53,5 @@ func triggerAnalyze(ctx context.Context, e event.Event) error {
 
 	a := analyzer.NewAnalyzer(chunksGateway, embeddingsGateway, aiClient)
 
-	return a.Analyze(context.Background())
+	return a.Analyze(ctx)
 }
