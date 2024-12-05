@@ -5,7 +5,6 @@ import (
 	"github.com/initialcapacity/ai-starter/internal/evaluation"
 	"github.com/initialcapacity/ai-starter/internal/query"
 	"github.com/initialcapacity/ai-starter/pkg/ai"
-	"github.com/initialcapacity/ai-starter/pkg/channelsupport"
 	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
 	"github.com/initialcapacity/ai-starter/pkg/websupport"
 	"log"
@@ -40,7 +39,7 @@ func main() {
 	mdReporter := evaluation.NewMarkdownReporter()
 
 	results := retriever.Retrieve(queries)
-	scores := channelsupport.CollectSlice(scoreRunner.Score(results))
+	scores := scoreRunner.Score(results)
 	if len(scores) == 0 {
 		log.Fatalln("no scores were generated, there was likely a problem")
 	}
