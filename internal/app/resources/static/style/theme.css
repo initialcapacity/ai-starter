@@ -1,5 +1,6 @@
 :root {
     --white: #FBFFFE;
+    --lightest-gray: #F7F7F7;
     --light-gray: #EDEDED;
     --dark-gray: #4A4545;
     --black: #080705;
@@ -8,10 +9,12 @@
     --alert: #931621;
 
     --text-color: var(--black);
+    --weak-text-color: var(--dark-gray);
     --link-color: var(--primary);
     --outline-color: var(--primary);
     --icon-color: var(--black);
     --background-color: var(--white);
+    --card-background-color: var(--lightest-gray);
     --hover-background-color: var(--light-gray);
 
     --inverted-background-color: var(--black);

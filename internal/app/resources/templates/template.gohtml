@@ -18,19 +18,68 @@
     </head>
     <body>
     <header>
-        <a href="/">
+        <ul>
+            <li class="heading">
+                <svg class="logo">
+                    <use xlink:href="/static/images/icons.svg#logo"></use>
+                </svg>
+            </li>
+            <li class="heading">
+                <h1>AI Starter</h1>
+            </li>
+            <li class="menu-toggle" onclick="document.querySelector('body').classList.toggle('menu-open')">
+                <svg class="open">
+                    <use xlink:href="/static/images/icons.svg#menu"></use>
+                </svg>
+                <svg class="close">
+                    <use xlink:href="/static/images/icons.svg#close"></use>
+                </svg>
+            </li>
+        </ul>
+    </header>
+    <nav>
+        <div class="scrollable">
+            <h2>App</h2>
             <ul>
                 <li>
-                    <svg class="logo">
-                        <use xlink:href="/static/images/icons.svg#logo"></use>
-                    </svg>
+                    <a href="/">
+                        <svg>
+                            <use xlink:href="/static/images/icons.svg#search"></use>
+                        </svg>
+                        Ask a question
+                    </a>
                 </li>
-                <li class="heading">
-                    <h1>AI Starter</h1>
+                <li>
+                    <a href="/health">
+                        <svg>
+                            <use xlink:href="/static/images/icons.svg#health"></use>
+                        </svg>
+                        Health
+                    </a>
                 </li>
             </ul>
-        </a>
-    </header>
+
+            <h2>Admin</h2>
+            <ul>
+                <li>
+                    <a href="/jobs/collections">
+                        <svg>
+                            <use xlink:href="/static/images/icons.svg#collection"></use>
+                        </svg>
+                        Collection
+                    </a>
+                </li>
+                <li>
+                    <a href="/jobs/analyses">
+                        <svg>
+                            <use xlink:href="/static/images/icons.svg#analysis"></use>
+                        </svg>
+                        Analysis
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
     <footer>
         <ul>
             <li><a href="https://github.com/initialcapacity/ai-starter">View on GitHub</a></li>
