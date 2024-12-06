@@ -6,6 +6,7 @@ import (
 	"github.com/cloudevents/sdk-go/v2/event"
 	"github.com/initialcapacity/ai-starter/internal/analyzer"
 	"github.com/initialcapacity/ai-starter/internal/collector"
+	"github.com/initialcapacity/ai-starter/internal/jobs"
 	"github.com/initialcapacity/ai-starter/pkg/ai"
 	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
 	"github.com/initialcapacity/ai-starter/pkg/feedsupport"
@@ -35,8 +36,9 @@ func triggerCollect(ctx context.Context, e event.Event) error {
 	chunksGateway := collector.NewChunksGateway(db)
 	chunker := ai.NewChunker(t, 6000)
 	chunksService := collector.NewChunksService(chunker, chunksGateway)
+	runsGateway := jobs.NewCollectionRunsGateway(db)
 
-	c := collector.New(parser, extractor, dataGateway, chunksService)
+	c := collector.New(parser, extractor, dataGateway, chunksService, runsGateway)
 
 	return c.Collect(feedUrls)
 }
@@ -50,8 +52,9 @@ func triggerAnalyze(ctx context.Context, e event.Event) error {
 	chunksGateway := collector.NewChunksGateway(db)
 	embeddingsGateway := analyzer.NewEmbeddingsGateway(db)
 	aiClient := ai.NewClient(openAiKey, openAiEndpoint)
+	runsGateway := jobs.NewAnalysisRunsGateway(db)
 
-	a := analyzer.NewAnalyzer(chunksGateway, embeddingsGateway, aiClient)
+	a := analyzer.NewAnalyzer(chunksGateway, embeddingsGateway, aiClient, runsGateway)
 
 	return a.Analyze(ctx)
 }

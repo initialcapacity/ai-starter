@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/initialcapacity/ai-starter/internal/collector"
+	"github.com/initialcapacity/ai-starter/internal/jobs"
 	"log/slog"
 )
 
@@ -12,10 +13,12 @@ type Analyzer struct {
 	chunksGateway     *collector.ChunksGateway
 	embeddingsGateway *EmbeddingsGateway
 	embeddingCreator  embeddingCreator
+	runsGateway       *jobs.AnalysisRunsGateway
 }
 
-func NewAnalyzer(chunksGateway *collector.ChunksGateway, embeddingsGateway *EmbeddingsGateway, embeddingCreator embeddingCreator) *Analyzer {
-	return &Analyzer{chunksGateway: chunksGateway, embeddingsGateway: embeddingsGateway, embeddingCreator: embeddingCreator}
+func NewAnalyzer(chunksGateway *collector.ChunksGateway, embeddingsGateway *EmbeddingsGateway,
+	embeddingCreator embeddingCreator, runsGateway *jobs.AnalysisRunsGateway) *Analyzer {
+	return &Analyzer{chunksGateway, embeddingsGateway, embeddingCreator, runsGateway}
 }
 
 func (a *Analyzer) Analyze(ctx context.Context) error {
@@ -26,6 +29,7 @@ func (a *Analyzer) Analyze(ctx context.Context) error {
 	if listErr != nil {
 		return fmt.Errorf("unable to list ids: %w", listErr)
 	}
+	embeddingsCreated := 0
 
 	slog.Info("found ids", "count", len(ids))
 	var idErrors []error
@@ -48,6 +52,12 @@ func (a *Analyzer) Analyze(ctx context.Context) error {
 		if err != nil {
 			idErrors = append(idErrors, fmt.Errorf("error saving embedding for id=%s: %w", id, err))
 		}
+		embeddingsCreated += 1
+	}
+
+	_, err := a.runsGateway.Create(len(ids), embeddingsCreated, len(idErrors))
+	if err != nil {
+		idErrors = append(idErrors, err)
 	}
 
 	return errors.Join(idErrors...)

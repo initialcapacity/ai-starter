@@ -44,6 +44,39 @@ func (tdb *TestDb) Execute(statement string, arguments ...any) {
 	assert.NoError(tdb.t, err)
 }
 
+func (tdb *TestDb) QueryMap(statement string, arguments ...any) []map[string]any {
+	rows, err := tdb.DB.Query(statement, arguments...)
+	assert.NoError(tdb.t, err)
+	columns, err := rows.Columns()
+	assert.NoError(tdb.t, err)
+	result := make([]map[string]any, 0)
+
+	for rows.Next() {
+		values := make([]any, len(columns))
+		valuePointers := make([]any, len(columns))
+		for i, _ := range values {
+			valuePointers[i] = &values[i]
+		}
+
+		err = rows.Scan(valuePointers...)
+		assert.NoError(tdb.t, err)
+
+		rowResult := make(map[string]any)
+		for i, columnName := range columns {
+			rowResult[columnName] = values[i]
+		}
+		result = append(result, rowResult)
+	}
+
+	return result
+}
+
+func (tdb *TestDb) QueryOneMap(statement string, arguments ...any) map[string]any {
+	results := tdb.QueryMap(statement, arguments...)
+	assert.Len(tdb.t, results, 1, fmt.Sprintf("Expected one result but got %d", len(results)))
+	return results[0]
+}
+
 func WithSuperDb(t *testing.T, action func(superDb *sql.DB)) {
 	superDb := dbsupport.CreateConnection("postgres://super_test@localhost:5432/postgres?sslmode=disable")
 	defer func(superDb *sql.DB) {

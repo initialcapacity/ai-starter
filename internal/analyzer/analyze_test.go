@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/initialcapacity/ai-starter/internal/analyzer"
 	"github.com/initialcapacity/ai-starter/internal/collector"
+	"github.com/initialcapacity/ai-starter/internal/jobs"
 	"github.com/initialcapacity/ai-starter/pkg/testsupport"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -27,8 +28,9 @@ func TestAnalyzer_Analyze(t *testing.T) {
 	embeddingsGateway := analyzer.NewEmbeddingsGateway(testDb.DB)
 	chunksGateway := collector.NewChunksGateway(testDb.DB)
 	aiClient := testsupport.NewTestAiClient(endpoint)
+	runsGateway := jobs.NewAnalysisRunsGateway(testDb.DB)
 
-	a := analyzer.NewAnalyzer(chunksGateway, embeddingsGateway, aiClient)
+	a := analyzer.NewAnalyzer(chunksGateway, embeddingsGateway, aiClient, runsGateway)
 
 	err := a.Analyze(context.Background())
 	assert.NoError(t, err)
@@ -36,4 +38,11 @@ func TestAnalyzer_Analyze(t *testing.T) {
 	chunk, err := embeddingsGateway.FindSimilar(testsupport.CreateVector(0))
 	assert.NoError(t, err)
 	assert.Equal(t, analyzer.CitedChunkRecord{Content: "chunk1", Source: "https://example.com"}, chunk)
+
+	result := testDb.QueryOneMap("select chunks_analyzed, analysis_runs.embeddings_created, errors from analysis_runs")
+	assert.Equal(t, map[string]any{
+		"chunks_analyzed":    int64(1),
+		"embeddings_created": int64(1),
+		"errors":             int64(0),
+	}, result)
 }

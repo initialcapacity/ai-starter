@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/initialcapacity/ai-starter/internal/collector"
+	"github.com/initialcapacity/ai-starter/internal/jobs"
 	"github.com/initialcapacity/ai-starter/pkg/ai"
 	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
 	"github.com/initialcapacity/ai-starter/pkg/feedsupport"
@@ -27,8 +28,9 @@ func main() {
 	chunksGateway := collector.NewChunksGateway(db)
 	chunker := ai.NewChunker(t, 6000)
 	chunksService := collector.NewChunksService(chunker, chunksGateway)
+	runsGateway := jobs.NewCollectionRunsGateway(db)
 
-	c := collector.New(parser, extractor, dataGateway, chunksService)
+	c := collector.New(parser, extractor, dataGateway, chunksService, runsGateway)
 
 	err := c.Collect(feedUrls)
 

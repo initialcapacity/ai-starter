@@ -17,8 +17,9 @@ func TestChunksService_SaveChunks(t *testing.T) {
 	chunksService := collector.NewChunksService(DummyChunker{}, chunksGateway)
 	testDb.Execute("insert into data (id, source, content) values ('41345dc1-2f3f-4bc9-8dba-ba397156cc16', 'https://example.com', 'some content')")
 
-	err := chunksService.SaveChunks("41345dc1-2f3f-4bc9-8dba-ba397156cc16", "some content")
+	count, err := chunksService.SaveChunks("41345dc1-2f3f-4bc9-8dba-ba397156cc16", "some content")
 	assert.NoError(t, err)
+	assert.Equal(t, 2, count)
 
 	content, err := dbsupport.Query(testDb.DB, "select content from chunks", func(rows *sql.Rows, content *string) error {
 		return rows.Scan(content)

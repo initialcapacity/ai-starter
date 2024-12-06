@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/initialcapacity/ai-starter/internal/collector"
+	"github.com/initialcapacity/ai-starter/internal/jobs"
 	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
 	"github.com/initialcapacity/ai-starter/pkg/feedsupport"
 	"github.com/initialcapacity/ai-starter/pkg/testsupport"
@@ -41,8 +42,9 @@ func TestCollector_Collect(t *testing.T) {
 	dataGateway := collector.NewDataGateway(testDb.DB)
 	chunksGateway := collector.NewChunksGateway(testDb.DB)
 	chunksService := collector.NewChunksService(DummyChunker{}, chunksGateway)
+	runsGateway := jobs.NewCollectionRunsGateway(testDb.DB)
 
-	collect := collector.New(parser, extractor, dataGateway, chunksService)
+	collect := collector.New(parser, extractor, dataGateway, chunksService, runsGateway)
 
 	err := collect.Collect([]string{rssEndpoint})
 	assert.NoError(t, err)
@@ -51,6 +53,13 @@ func TestCollector_Collect(t *testing.T) {
 		return rows.Scan(content)
 	})
 	assert.NoError(t, err)
-
 	testsupport.AssertContainsExactly(t, []string{"some text ", "from feed 1", "some text ", "from feed 2"}, content)
+
+	result := testDb.QueryOneMap("select feeds_collected, articles_collected, chunks_collected, errors from collection_runs")
+	assert.Equal(t, map[string]any{
+		"feeds_collected":    int64(1),
+		"articles_collected": int64(2),
+		"chunks_collected":   int64(4),
+		"errors":             int64(0),
+	}, result)
 }

@@ -2,19 +2,22 @@ package collector
 
 import (
 	"errors"
+	"github.com/initialcapacity/ai-starter/internal/jobs"
 	"github.com/initialcapacity/ai-starter/pkg/feedsupport"
 	"log/slog"
 )
 
 type Collector struct {
-	extractor     feedsupport.Extractor
 	rssParser     feedsupport.Parser
+	extractor     feedsupport.Extractor
 	gateway       *DataGateway
 	chunksService *ChunksService
+	runsGateway   *jobs.CollectionRunsGateway
 }
 
-func New(rssParser feedsupport.Parser, extractor feedsupport.Extractor, gateway *DataGateway, chunksService *ChunksService) *Collector {
-	return &Collector{rssParser: rssParser, extractor: extractor, gateway: gateway, chunksService: chunksService}
+func New(rssParser feedsupport.Parser, extractor feedsupport.Extractor,
+	gateway *DataGateway, chunksService *ChunksService, runsGateway *jobs.CollectionRunsGateway) *Collector {
+	return &Collector{rssParser, extractor, gateway, chunksService, runsGateway}
 }
 
 func (c *Collector) Collect(feedUrls []string) error {
@@ -23,15 +26,20 @@ func (c *Collector) Collect(feedUrls []string) error {
 
 	links := c.getLinks(feedUrls)
 	var linkErrors []error
+	articlesProcessed := 0
+	chunksProcessed := 0
 
 	for _, link := range links {
 		slog.Info("Found", "link", link)
 
 		exists, err := c.gateway.Exists(link)
-		if err != nil || exists {
+		if err != nil {
 			linkErrors = append(linkErrors, err)
+		}
+		if err != nil || exists {
 			continue
 		}
+		articlesProcessed += 1
 
 		text, err := c.extractor.FullText(link)
 		if err != nil {
@@ -45,10 +53,16 @@ func (c *Collector) Collect(feedUrls []string) error {
 			continue
 		}
 
-		err = c.chunksService.SaveChunks(dataId, text)
+		chunks, err := c.chunksService.SaveChunks(dataId, text)
 		if err != nil {
 			linkErrors = append(linkErrors, err)
 		}
+		chunksProcessed += chunks
+	}
+
+	_, err := c.runsGateway.Create(len(feedUrls), articlesProcessed, chunksProcessed, len(linkErrors))
+	if err != nil {
+		linkErrors = append(linkErrors, err)
 	}
 
 	return errors.Join(linkErrors...)

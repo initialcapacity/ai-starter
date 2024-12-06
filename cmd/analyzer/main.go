@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/initialcapacity/ai-starter/internal/analyzer"
 	"github.com/initialcapacity/ai-starter/internal/collector"
+	"github.com/initialcapacity/ai-starter/internal/jobs"
 	"github.com/initialcapacity/ai-starter/pkg/ai"
 	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
 	"github.com/initialcapacity/ai-starter/pkg/websupport"
@@ -19,8 +20,9 @@ func main() {
 	chunksGateway := collector.NewChunksGateway(db)
 	embeddingsGateway := analyzer.NewEmbeddingsGateway(db)
 	aiClient := ai.NewClient(openAiKey, openAiEndpoint)
+	runsGateway := jobs.NewAnalysisRunsGateway(db)
 
-	a := analyzer.NewAnalyzer(chunksGateway, embeddingsGateway, aiClient)
+	a := analyzer.NewAnalyzer(chunksGateway, embeddingsGateway, aiClient, runsGateway)
 
 	err := a.Analyze(context.Background())
 
