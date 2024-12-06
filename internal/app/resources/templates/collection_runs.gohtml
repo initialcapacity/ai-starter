@@ -1,0 +1,33 @@
+{{- template "base" .}}
+{{- define "main"}}
+    <section>
+        <h1>Collection Runs</h1>
+
+        <div class="table-scroll-wrapper">
+            <table>
+                <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>Feeds Collected</td>
+                    <td>Articles Collected</td>
+                    <td>Chunks Collected</td>
+                    <td>Errors</td>
+                    <td>Time</td>
+                </tr>
+                </thead>
+                <tbody>
+                {{range .CollectionRuns}}
+                    <tr>
+                        <td>{{.Id}}</td>
+                        <td>{{.FeedsCollected}}</td>
+                        <td>{{.ArticlesCollected}}</td>
+                        <td>{{.ChunksCollected}}</td>
+                        <td>{{.NumberOfErrors}}</td>
+                        <td>{{.CreatedAt}}</td>
+                    </tr>
+                {{end}}
+                </tbody>
+            </table>
+        </div>
+    </section>
+{{- end}}

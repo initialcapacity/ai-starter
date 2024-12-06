@@ -1,0 +1,31 @@
+{{- template "base" .}}
+{{- define "main"}}
+    <section>
+        <h1>Analysis Runs</h1>
+
+        <div class="table-scroll-wrapper">
+            <table>
+                <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>Chunks Analyzed</td>
+                    <td>Embeddings Created</td>
+                    <td>Errors</td>
+                    <td>Time</td>
+                </tr>
+                </thead>
+                <tbody>
+                {{range .AnalysisRuns}}
+                    <tr>
+                        <td>{{.Id}}</td>
+                        <td>{{.ChunksAnalyzed}}</td>
+                        <td>{{.EmbeddingsCreated}}</td>
+                        <td>{{.NumberOfErrors}}</td>
+                        <td>{{.CreatedAt}}</td>
+                    </tr>
+                {{end}}
+                </tbody>
+            </table>
+        </div>
+    </section>
+{{- end}}
