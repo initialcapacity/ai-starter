@@ -39,7 +39,9 @@ func (g CollectionRunsGateway) Create(feedsCollected int, articlesCollected int,
 func (g CollectionRunsGateway) List() ([]CollectionRunRecord, error) {
 	return dbsupport.Query(
 		g.db,
-		`select id, feeds_collected, articles_collected, chunks_collected, errors, created_at from collection_runs`,
+		`select id, feeds_collected, articles_collected, chunks_collected, errors, created_at 
+			from collection_runs
+			order by created_at desc`,
 		func(row *sql.Rows, record *CollectionRunRecord) error {
 			return row.Scan(&record.Id, &record.FeedsCollected, &record.ArticlesCollected, &record.ChunksCollected, &record.NumberOfErrors, &record.CreatedAt)
 		})

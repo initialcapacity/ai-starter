@@ -38,7 +38,9 @@ func (g AnalysisRunsGateway) Create(chunksAnalyzed int, embeddingsCreated int, n
 func (g AnalysisRunsGateway) List() ([]AnalysisRunRecord, error) {
 	return dbsupport.Query(
 		g.db,
-		`select id, chunks_analyzed, embeddings_created, errors, created_at from analysis_runs`,
+		`select id, chunks_analyzed, embeddings_created, errors, created_at
+			from analysis_runs
+			order by created_at desc`,
 		func(row *sql.Rows, record *AnalysisRunRecord) error {
 			return row.Scan(&record.Id, &record.ChunksAnalyzed, &record.EmbeddingsCreated, &record.NumberOfErrors, &record.CreatedAt)
 		})

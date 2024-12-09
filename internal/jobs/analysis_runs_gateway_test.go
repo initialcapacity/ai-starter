@@ -34,13 +34,18 @@ func TestAnalysisRunsGateway_List(t *testing.T) {
 	gateway := jobs.NewAnalysisRunsGateway(testDb.DB)
 
 	testDb.Execute("insert into analysis_runs (chunks_analyzed, embeddings_created, errors) values (2, 3, 4)")
+	testDb.Execute("insert into analysis_runs (chunks_analyzed, embeddings_created, errors) values (12, 13, 14)")
 
 	records, err := gateway.List()
 	require.NoError(t, err)
 
-	assert.Equal(t, 1, len(records))
+	assert.Equal(t, 2, len(records))
 	assert.Len(t, records[0].Id, 36)
-	assert.Equal(t, 2, records[0].ChunksAnalyzed)
-	assert.Equal(t, 3, records[0].EmbeddingsCreated)
-	assert.Equal(t, 4, records[0].NumberOfErrors)
+	assert.Equal(t, 12, records[0].ChunksAnalyzed)
+	assert.Equal(t, 13, records[0].EmbeddingsCreated)
+	assert.Equal(t, 14, records[0].NumberOfErrors)
+	assert.Len(t, records[1].Id, 36)
+	assert.Equal(t, 2, records[1].ChunksAnalyzed)
+	assert.Equal(t, 3, records[1].EmbeddingsCreated)
+	assert.Equal(t, 4, records[1].NumberOfErrors)
 }

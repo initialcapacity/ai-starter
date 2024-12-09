@@ -36,14 +36,20 @@ func TestCollectionRunsGateway_List(t *testing.T) {
 	gateway := jobs.NewCollectionRunsGateway(testDb.DB)
 
 	testDb.Execute("insert into collection_runs (feeds_collected, articles_collected, chunks_collected, errors) values (2, 3, 4, 5)")
+	testDb.Execute("insert into collection_runs (feeds_collected, articles_collected, chunks_collected, errors) values (12, 13, 14, 15)")
 
 	records, err := gateway.List()
 	require.NoError(t, err)
 
-	assert.Equal(t, 1, len(records))
+	assert.Equal(t, 2, len(records))
 	assert.Len(t, records[0].Id, 36)
-	assert.Equal(t, 2, records[0].FeedsCollected)
-	assert.Equal(t, 3, records[0].ArticlesCollected)
-	assert.Equal(t, 4, records[0].ChunksCollected)
-	assert.Equal(t, 5, records[0].NumberOfErrors)
+	assert.Equal(t, 12, records[0].FeedsCollected)
+	assert.Equal(t, 13, records[0].ArticlesCollected)
+	assert.Equal(t, 14, records[0].ChunksCollected)
+	assert.Equal(t, 15, records[0].NumberOfErrors)
+	assert.Len(t, records[1].Id, 36)
+	assert.Equal(t, 2, records[1].FeedsCollected)
+	assert.Equal(t, 3, records[1].ArticlesCollected)
+	assert.Equal(t, 4, records[1].ChunksCollected)
+	assert.Equal(t, 5, records[1].NumberOfErrors)
 }
