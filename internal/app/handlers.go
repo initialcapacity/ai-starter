@@ -2,8 +2,8 @@ package app
 
 import (
 	"database/sql"
-	"github.com/initialcapacity/ai-starter/internal/analyzer"
-	"github.com/initialcapacity/ai-starter/internal/jobs"
+	"github.com/initialcapacity/ai-starter/internal/analysis"
+	"github.com/initialcapacity/ai-starter/internal/collection"
 	"github.com/initialcapacity/ai-starter/internal/query"
 	"github.com/initialcapacity/ai-starter/pkg/ai"
 	"io/fs"
@@ -11,9 +11,9 @@ import (
 )
 
 func Handlers(aiClient ai.Client, db *sql.DB) func(mux *http.ServeMux) {
-	collectionRunsGateway := jobs.NewCollectionRunsGateway(db)
-	analysisRunsGateway := jobs.NewAnalysisRunsGateway(db)
-	embeddingsGateway := analyzer.NewEmbeddingsGateway(db)
+	collectionRunsGateway := collection.NewCollectionRunsGateway(db)
+	analysisRunsGateway := analysis.NewAnalysisRunsGateway(db)
+	embeddingsGateway := analysis.NewEmbeddingsGateway(db)
 	queryService := query.NewService(embeddingsGateway, aiClient)
 
 	return func(mux *http.ServeMux) {

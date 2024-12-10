@@ -1,8 +1,8 @@
-package analyzer_test
+package analysis_test
 
 import (
 	"database/sql"
-	"github.com/initialcapacity/ai-starter/internal/analyzer"
+	"github.com/initialcapacity/ai-starter/internal/analysis"
 	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
 	"github.com/initialcapacity/ai-starter/pkg/testsupport"
 	"github.com/pgvector/pgvector-go"
@@ -14,7 +14,7 @@ func TestEmbeddingsGateway_UnprocessedIds(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
 	defer testDb.Close()
 
-	gateway := analyzer.NewEmbeddingsGateway(testDb.DB)
+	gateway := analysis.NewEmbeddingsGateway(testDb.DB)
 
 	testDb.Execute("insert into data (id, source, content) values ('aaaaaaaa-2f3f-4bc9-8dba-ba397156cc16', 'https://example.com', 'some content')")
 	testDb.Execute("insert into chunks (id, data_id, content) values ('bbbbbbbb-2f3f-4bc9-8dba-ba397156cc16', 'aaaaaaaa-2f3f-4bc9-8dba-ba397156cc16','a chunk')")
@@ -32,7 +32,7 @@ func TestEmbeddingsGateway_Save(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
 	defer testDb.Close()
 
-	gateway := analyzer.NewEmbeddingsGateway(testDb.DB)
+	gateway := analysis.NewEmbeddingsGateway(testDb.DB)
 
 	testDb.Execute("insert into data (id, source, content) values ('aaaaaaaa-2f3f-4bc9-8dba-ba397156cc16', 'https://example.com', 'some content')")
 	testDb.Execute("insert into chunks (id, data_id, content) values ('bbbbbbbb-2f3f-4bc9-8dba-ba397156cc16', 'aaaaaaaa-2f3f-4bc9-8dba-ba397156cc16','a chunk')")
@@ -51,7 +51,7 @@ func TestEmbeddingsGateway_FindSimilar(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
 	defer testDb.Close()
 
-	gateway := analyzer.NewEmbeddingsGateway(testDb.DB)
+	gateway := analysis.NewEmbeddingsGateway(testDb.DB)
 
 	testDb.Execute("insert into data (id, source, content) values ('aaaaaaaa-2f3f-4bc9-8dba-ba397156cc16', 'https://example.com', 'some content')")
 	testDb.Execute("insert into chunks (id, data_id, content) values ('bbbbbbbb-2f3f-4bc9-8dba-ba397156cc16', 'aaaaaaaa-2f3f-4bc9-8dba-ba397156cc16','a chunk')")
@@ -65,5 +65,5 @@ func TestEmbeddingsGateway_FindSimilar(t *testing.T) {
 	similar, err := gateway.FindSimilar(testsupport.CreateVector(1))
 	assert.NoError(t, err)
 
-	assert.Equal(t, analyzer.CitedChunkRecord{Content: "another chunk", Source: "https://example.com"}, similar)
+	assert.Equal(t, analysis.CitedChunkRecord{Content: "another chunk", Source: "https://example.com"}, similar)
 }

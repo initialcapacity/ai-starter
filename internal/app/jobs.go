@@ -1,13 +1,14 @@
 package app
 
 import (
-	"github.com/initialcapacity/ai-starter/internal/jobs"
+	"github.com/initialcapacity/ai-starter/internal/analysis"
+	"github.com/initialcapacity/ai-starter/internal/collection"
 	"github.com/initialcapacity/ai-starter/pkg/websupport"
 	"log/slog"
 	"net/http"
 )
 
-func CollectionRuns(gateway *jobs.CollectionRunsGateway) http.HandlerFunc {
+func CollectionRuns(gateway *collection.CollectionRunsGateway) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		runs, err := gateway.List()
 		if err != nil {
@@ -21,10 +22,10 @@ func CollectionRuns(gateway *jobs.CollectionRunsGateway) http.HandlerFunc {
 }
 
 type collectionRunsModel struct {
-	CollectionRuns []jobs.CollectionRunRecord
+	CollectionRuns []collection.CollectionRunRecord
 }
 
-func AnalysisRuns(gateway *jobs.AnalysisRunsGateway) http.HandlerFunc {
+func AnalysisRuns(gateway *analysis.RunsGateway) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		runs, err := gateway.List()
 		if err != nil {
@@ -38,5 +39,5 @@ func AnalysisRuns(gateway *jobs.AnalysisRunsGateway) http.HandlerFunc {
 }
 
 type analysisRunsModel struct {
-	AnalysisRuns []jobs.AnalysisRunRecord
+	AnalysisRuns []analysis.RunRecord
 }

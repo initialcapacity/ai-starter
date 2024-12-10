@@ -1,8 +1,8 @@
-package collector_test
+package collection_test
 
 import (
 	"database/sql"
-	"github.com/initialcapacity/ai-starter/internal/collector"
+	"github.com/initialcapacity/ai-starter/internal/collection"
 	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
 	"github.com/initialcapacity/ai-starter/pkg/testsupport"
 	"github.com/stretchr/testify/assert"
@@ -13,8 +13,8 @@ func TestChunksService_SaveChunks(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
 	defer testDb.Close()
 
-	chunksGateway := collector.NewChunksGateway(testDb.DB)
-	chunksService := collector.NewChunksService(DummyChunker{}, chunksGateway)
+	chunksGateway := collection.NewChunksGateway(testDb.DB)
+	chunksService := collection.NewChunksService(DummyChunker{}, chunksGateway)
 	testDb.Execute("insert into data (id, source, content) values ('41345dc1-2f3f-4bc9-8dba-ba397156cc16', 'https://example.com', 'some content')")
 
 	count, err := chunksService.SaveChunks("41345dc1-2f3f-4bc9-8dba-ba397156cc16", "some content")

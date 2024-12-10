@@ -4,9 +4,8 @@ import (
 	"context"
 	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
 	"github.com/cloudevents/sdk-go/v2/event"
-	"github.com/initialcapacity/ai-starter/internal/analyzer"
-	"github.com/initialcapacity/ai-starter/internal/collector"
-	"github.com/initialcapacity/ai-starter/internal/jobs"
+	"github.com/initialcapacity/ai-starter/internal/analysis"
+	"github.com/initialcapacity/ai-starter/internal/collection"
 	"github.com/initialcapacity/ai-starter/pkg/ai"
 	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
 	"github.com/initialcapacity/ai-starter/pkg/feedsupport"
@@ -31,14 +30,14 @@ func triggerCollect(ctx context.Context, e event.Event) error {
 
 	parser := feedsupport.NewParser(client)
 	extractor := feedsupport.NewExtractor(client)
-	dataGateway := collector.NewDataGateway(db)
+	dataGateway := collection.NewDataGateway(db)
 	t := ai.NewTokenizer(tokenizer.Cl100kBase)
-	chunksGateway := collector.NewChunksGateway(db)
+	chunksGateway := collection.NewChunksGateway(db)
 	chunker := ai.NewChunker(t, 6000)
-	chunksService := collector.NewChunksService(chunker, chunksGateway)
-	runsGateway := jobs.NewCollectionRunsGateway(db)
+	chunksService := collection.NewChunksService(chunker, chunksGateway)
+	runsGateway := collection.NewCollectionRunsGateway(db)
 
-	c := collector.New(parser, extractor, dataGateway, chunksService, runsGateway)
+	c := collection.New(parser, extractor, dataGateway, chunksService, runsGateway)
 
 	return c.Collect(feedUrls)
 }
@@ -49,12 +48,12 @@ func triggerAnalyze(ctx context.Context, e event.Event) error {
 	openAiEndpoint := websupport.EnvironmentVariable("OPEN_AI_ENDPOINT", "https://api.openai.com/v1")
 
 	db := dbsupport.CreateConnection(databaseUrl)
-	chunksGateway := collector.NewChunksGateway(db)
-	embeddingsGateway := analyzer.NewEmbeddingsGateway(db)
+	chunksGateway := collection.NewChunksGateway(db)
+	embeddingsGateway := analysis.NewEmbeddingsGateway(db)
 	aiClient := ai.NewClient(openAiKey, openAiEndpoint)
-	runsGateway := jobs.NewAnalysisRunsGateway(db)
+	runsGateway := analysis.NewAnalysisRunsGateway(db)
 
-	a := analyzer.NewAnalyzer(chunksGateway, embeddingsGateway, aiClient, runsGateway)
+	a := analysis.NewAnalyzer(chunksGateway, embeddingsGateway, aiClient, runsGateway)
 
 	return a.Analyze(ctx)
 }

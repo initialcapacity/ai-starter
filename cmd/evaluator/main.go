@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/initialcapacity/ai-starter/internal/analyzer"
+	"github.com/initialcapacity/ai-starter/internal/analysis"
 	"github.com/initialcapacity/ai-starter/internal/evaluation"
 	"github.com/initialcapacity/ai-starter/internal/query"
 	"github.com/initialcapacity/ai-starter/pkg/ai"
@@ -29,7 +29,7 @@ func main() {
 
 	aiClient := ai.NewClient(openAiKey, openAiEndpoint)
 	db := dbsupport.CreateConnection(databaseUrl)
-	embeddingsGateway := analyzer.NewEmbeddingsGateway(db)
+	embeddingsGateway := analysis.NewEmbeddingsGateway(db)
 	queryService := query.NewService(embeddingsGateway, aiClient)
 	aiScorer := evaluation.NewAiScorer(aiClient)
 

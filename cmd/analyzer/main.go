@@ -2,9 +2,8 @@ package main
 
 import (
 	"context"
-	"github.com/initialcapacity/ai-starter/internal/analyzer"
-	"github.com/initialcapacity/ai-starter/internal/collector"
-	"github.com/initialcapacity/ai-starter/internal/jobs"
+	"github.com/initialcapacity/ai-starter/internal/analysis"
+	"github.com/initialcapacity/ai-starter/internal/collection"
 	"github.com/initialcapacity/ai-starter/pkg/ai"
 	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
 	"github.com/initialcapacity/ai-starter/pkg/websupport"
@@ -17,12 +16,12 @@ func main() {
 	openAiEndpoint := websupport.EnvironmentVariable("OPEN_AI_ENDPOINT", "https://api.openai.com/v1")
 
 	db := dbsupport.CreateConnection(databaseUrl)
-	chunksGateway := collector.NewChunksGateway(db)
-	embeddingsGateway := analyzer.NewEmbeddingsGateway(db)
+	chunksGateway := collection.NewChunksGateway(db)
+	embeddingsGateway := analysis.NewEmbeddingsGateway(db)
 	aiClient := ai.NewClient(openAiKey, openAiEndpoint)
-	runsGateway := jobs.NewAnalysisRunsGateway(db)
+	runsGateway := analysis.NewAnalysisRunsGateway(db)
 
-	a := analyzer.NewAnalyzer(chunksGateway, embeddingsGateway, aiClient, runsGateway)
+	a := analysis.NewAnalyzer(chunksGateway, embeddingsGateway, aiClient, runsGateway)
 
 	err := a.Analyze(context.Background())
 

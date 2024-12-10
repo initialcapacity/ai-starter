@@ -1,7 +1,7 @@
-package jobs_test
+package analysis_test
 
 import (
-	"github.com/initialcapacity/ai-starter/internal/jobs"
+	"github.com/initialcapacity/ai-starter/internal/analysis"
 	"github.com/initialcapacity/ai-starter/pkg/testsupport"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -11,7 +11,7 @@ import (
 func TestAnalysisRunsGateway_Create(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
 	defer testDb.Close()
-	gateway := jobs.NewAnalysisRunsGateway(testDb.DB)
+	gateway := analysis.NewAnalysisRunsGateway(testDb.DB)
 
 	record, err := gateway.Create(3, 4, 5)
 	require.NoError(t, err)
@@ -31,7 +31,7 @@ func TestAnalysisRunsGateway_Create(t *testing.T) {
 func TestAnalysisRunsGateway_List(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
 	defer testDb.Close()
-	gateway := jobs.NewAnalysisRunsGateway(testDb.DB)
+	gateway := analysis.NewAnalysisRunsGateway(testDb.DB)
 
 	testDb.Execute("insert into analysis_runs (chunks_analyzed, embeddings_created, errors) values (2, 3, 4)")
 	testDb.Execute("insert into analysis_runs (chunks_analyzed, embeddings_created, errors) values (12, 13, 14)")

@@ -1,4 +1,4 @@
-package jobs
+package collection
 
 import (
 	"database/sql"

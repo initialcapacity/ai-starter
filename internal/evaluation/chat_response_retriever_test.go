@@ -2,7 +2,7 @@ package evaluation_test
 
 import (
 	"context"
-	"github.com/initialcapacity/ai-starter/internal/analyzer"
+	"github.com/initialcapacity/ai-starter/internal/analysis"
 	"github.com/initialcapacity/ai-starter/internal/evaluation"
 	"github.com/initialcapacity/ai-starter/internal/query"
 	"github.com/initialcapacity/ai-starter/pkg/ai"
@@ -20,7 +20,7 @@ func TestChatResponseRetriever_Retrieve(t *testing.T) {
 	testDb.Execute("insert into chunks (id, data_id, content) values ('bbbbbbbb-2f3f-4bc9-8dba-ba397156cc16', 'aaaaaaaa-2f3f-4bc9-8dba-ba397156cc16','a chunk')")
 	testDb.Execute("insert into embeddings (chunk_id, embedding) values ('bbbbbbbb-2f3f-4bc9-8dba-ba397156cc16', $1)", pgvector.NewVector(testsupport.CreateVector(0)))
 
-	queryService := query.NewService(analyzer.NewEmbeddingsGateway(testDb.DB), fakeAi{})
+	queryService := query.NewService(analysis.NewEmbeddingsGateway(testDb.DB), fakeAi{})
 
 	retriever := evaluation.NewChatResponseRetriever(queryService)
 

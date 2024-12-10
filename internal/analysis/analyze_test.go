@@ -1,10 +1,9 @@
-package analyzer_test
+package analysis_test
 
 import (
 	"context"
-	"github.com/initialcapacity/ai-starter/internal/analyzer"
-	"github.com/initialcapacity/ai-starter/internal/collector"
-	"github.com/initialcapacity/ai-starter/internal/jobs"
+	"github.com/initialcapacity/ai-starter/internal/analysis"
+	"github.com/initialcapacity/ai-starter/internal/collection"
 	"github.com/initialcapacity/ai-starter/pkg/testsupport"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -25,19 +24,19 @@ func TestAnalyzer_Analyze(t *testing.T) {
 	testDb.Execute("insert into data (id, source, content) values ('aaaaaaaa-2f3f-4bc9-8dba-ba397156cc16', 'https://example.com', 'some content')")
 	testDb.Execute("insert into chunks (id, data_id, content) values ('bbbbbbbb-2f3f-4bc9-8dba-ba397156cc16', 'aaaaaaaa-2f3f-4bc9-8dba-ba397156cc16','chunk1')")
 
-	embeddingsGateway := analyzer.NewEmbeddingsGateway(testDb.DB)
-	chunksGateway := collector.NewChunksGateway(testDb.DB)
+	embeddingsGateway := analysis.NewEmbeddingsGateway(testDb.DB)
+	chunksGateway := collection.NewChunksGateway(testDb.DB)
 	aiClient := testsupport.NewTestAiClient(endpoint)
-	runsGateway := jobs.NewAnalysisRunsGateway(testDb.DB)
+	runsGateway := analysis.NewAnalysisRunsGateway(testDb.DB)
 
-	a := analyzer.NewAnalyzer(chunksGateway, embeddingsGateway, aiClient, runsGateway)
+	a := analysis.NewAnalyzer(chunksGateway, embeddingsGateway, aiClient, runsGateway)
 
 	err := a.Analyze(context.Background())
 	assert.NoError(t, err)
 
 	chunk, err := embeddingsGateway.FindSimilar(testsupport.CreateVector(0))
 	assert.NoError(t, err)
-	assert.Equal(t, analyzer.CitedChunkRecord{Content: "chunk1", Source: "https://example.com"}, chunk)
+	assert.Equal(t, analysis.CitedChunkRecord{Content: "chunk1", Source: "https://example.com"}, chunk)
 
 	result := testDb.QueryOneMap("select chunks_analyzed, analysis_runs.embeddings_created, errors from analysis_runs")
 	assert.Equal(t, map[string]any{

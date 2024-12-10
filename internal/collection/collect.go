@@ -1,8 +1,7 @@
-package collector
+package collection
 
 import (
 	"errors"
-	"github.com/initialcapacity/ai-starter/internal/jobs"
 	"github.com/initialcapacity/ai-starter/pkg/feedsupport"
 	"log/slog"
 )
@@ -12,11 +11,11 @@ type Collector struct {
 	extractor     feedsupport.Extractor
 	gateway       *DataGateway
 	chunksService *ChunksService
-	runsGateway   *jobs.CollectionRunsGateway
+	runsGateway   *CollectionRunsGateway
 }
 
 func New(rssParser feedsupport.Parser, extractor feedsupport.Extractor,
-	gateway *DataGateway, chunksService *ChunksService, runsGateway *jobs.CollectionRunsGateway) *Collector {
+	gateway *DataGateway, chunksService *ChunksService, runsGateway *CollectionRunsGateway) *Collector {
 	return &Collector{rssParser, extractor, gateway, chunksService, runsGateway}
 }
 

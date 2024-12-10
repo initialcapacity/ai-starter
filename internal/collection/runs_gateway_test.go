@@ -1,7 +1,7 @@
-package jobs_test
+package collection_test
 
 import (
-	"github.com/initialcapacity/ai-starter/internal/jobs"
+	"github.com/initialcapacity/ai-starter/internal/collection"
 	"github.com/initialcapacity/ai-starter/pkg/testsupport"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -11,7 +11,7 @@ import (
 func TestCollectionRunsGateway_Create(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
 	defer testDb.Close()
-	gateway := jobs.NewCollectionRunsGateway(testDb.DB)
+	gateway := collection.NewCollectionRunsGateway(testDb.DB)
 
 	record, err := gateway.Create(3, 4, 5, 6)
 	require.NoError(t, err)
@@ -33,7 +33,7 @@ func TestCollectionRunsGateway_Create(t *testing.T) {
 func TestCollectionRunsGateway_List(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
 	defer testDb.Close()
-	gateway := jobs.NewCollectionRunsGateway(testDb.DB)
+	gateway := collection.NewCollectionRunsGateway(testDb.DB)
 
 	testDb.Execute("insert into collection_runs (feeds_collected, articles_collected, chunks_collected, errors) values (2, 3, 4, 5)")
 	testDb.Execute("insert into collection_runs (feeds_collected, articles_collected, chunks_collected, errors) values (12, 13, 14, 15)")

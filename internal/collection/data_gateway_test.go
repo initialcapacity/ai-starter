@@ -1,8 +1,8 @@
-package collector_test
+package collection_test
 
 import (
 	"database/sql"
-	"github.com/initialcapacity/ai-starter/internal/collector"
+	"github.com/initialcapacity/ai-starter/internal/collection"
 	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
 	"github.com/initialcapacity/ai-starter/pkg/testsupport"
 	"github.com/stretchr/testify/assert"
@@ -13,7 +13,7 @@ func TestDataGateway_Save(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
 	defer testDb.Close()
 
-	dataGateway := collector.NewDataGateway(testDb.DB)
+	dataGateway := collection.NewDataGateway(testDb.DB)
 
 	id, err := dataGateway.Save("https://example.com", "some content")
 	assert.NoError(t, err)
@@ -30,7 +30,7 @@ func TestDataGateway_Exists(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
 	defer testDb.Close()
 
-	dataGateway := collector.NewDataGateway(testDb.DB)
+	dataGateway := collection.NewDataGateway(testDb.DB)
 
 	_, err := dataGateway.Save("https://example.com", "some content")
 	assert.NoError(t, err)

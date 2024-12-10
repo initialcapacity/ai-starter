@@ -3,7 +3,7 @@ package query_test
 import (
 	"context"
 	"errors"
-	"github.com/initialcapacity/ai-starter/internal/analyzer"
+	"github.com/initialcapacity/ai-starter/internal/analysis"
 	"github.com/initialcapacity/ai-starter/internal/query"
 	"github.com/initialcapacity/ai-starter/pkg/ai"
 	"github.com/initialcapacity/ai-starter/pkg/testsupport"
@@ -17,7 +17,7 @@ func TestQueryService_FetchResponse(t *testing.T) {
 	defer testDb.Close()
 	insertData(testDb)
 
-	service := query.NewService(analyzer.NewEmbeddingsGateway(testDb.DB), fakeAi{})
+	service := query.NewService(analysis.NewEmbeddingsGateway(testDb.DB), fakeAi{})
 
 	result, err := service.FetchResponse(context.Background(), "Does this sound good?")
 	assert.NoError(t, err)
@@ -31,7 +31,7 @@ func TestQueryService_FetchResponse_EmbeddingError(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
 	defer testDb.Close()
 	insertData(testDb)
-	service := query.NewService(analyzer.NewEmbeddingsGateway(testDb.DB), fakeAi{embeddingError: errors.New("bad news")})
+	service := query.NewService(analysis.NewEmbeddingsGateway(testDb.DB), fakeAi{embeddingError: errors.New("bad news")})
 
 	_, err := service.FetchResponse(context.Background(), "Does this sound good?")
 
@@ -41,7 +41,7 @@ func TestQueryService_FetchResponse_EmbeddingError(t *testing.T) {
 func TestQueryService_FetchResponse_NoEmbeddings(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
 	defer testDb.Close()
-	service := query.NewService(analyzer.NewEmbeddingsGateway(testDb.DB), fakeAi{})
+	service := query.NewService(analysis.NewEmbeddingsGateway(testDb.DB), fakeAi{})
 
 	_, err := service.FetchResponse(context.Background(), "Does this sound good?")
 
@@ -52,7 +52,7 @@ func TestQueryService_FetchResponse_CompletionError(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
 	defer testDb.Close()
 	insertData(testDb)
-	service := query.NewService(analyzer.NewEmbeddingsGateway(testDb.DB), fakeAi{completionError: errors.New("bad news")})
+	service := query.NewService(analysis.NewEmbeddingsGateway(testDb.DB), fakeAi{completionError: errors.New("bad news")})
 
 	_, err := service.FetchResponse(context.Background(), "Does this sound good?")
 

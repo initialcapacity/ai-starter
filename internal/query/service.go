@@ -3,17 +3,17 @@ package query
 import (
 	"context"
 	"fmt"
-	"github.com/initialcapacity/ai-starter/internal/analyzer"
+	"github.com/initialcapacity/ai-starter/internal/analysis"
 	"github.com/initialcapacity/ai-starter/pkg/ai"
 	"log/slog"
 )
 
 type Service struct {
-	embeddingsGateway *analyzer.EmbeddingsGateway
+	embeddingsGateway *analysis.EmbeddingsGateway
 	aiClient          aiClient
 }
 
-func NewService(embeddingsGateway *analyzer.EmbeddingsGateway, aiClient aiClient) *Service {
+func NewService(embeddingsGateway *analysis.EmbeddingsGateway, aiClient aiClient) *Service {
 	return &Service{embeddingsGateway: embeddingsGateway, aiClient: aiClient}
 }
 

@@ -1,23 +1,22 @@
-package analyzer
+package analysis
 
 import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/initialcapacity/ai-starter/internal/collector"
-	"github.com/initialcapacity/ai-starter/internal/jobs"
+	"github.com/initialcapacity/ai-starter/internal/collection"
 	"log/slog"
 )
 
 type Analyzer struct {
-	chunksGateway     *collector.ChunksGateway
+	chunksGateway     *collection.ChunksGateway
 	embeddingsGateway *EmbeddingsGateway
 	embeddingCreator  embeddingCreator
-	runsGateway       *jobs.AnalysisRunsGateway
+	runsGateway       *RunsGateway
 }
 
-func NewAnalyzer(chunksGateway *collector.ChunksGateway, embeddingsGateway *EmbeddingsGateway,
-	embeddingCreator embeddingCreator, runsGateway *jobs.AnalysisRunsGateway) *Analyzer {
+func NewAnalyzer(chunksGateway *collection.ChunksGateway, embeddingsGateway *EmbeddingsGateway,
+	embeddingCreator embeddingCreator, runsGateway *RunsGateway) *Analyzer {
 	return &Analyzer{chunksGateway, embeddingsGateway, embeddingCreator, runsGateway}
 }
 

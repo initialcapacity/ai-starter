@@ -2,8 +2,9 @@ package app_test
 
 import (
 	"fmt"
+	"github.com/initialcapacity/ai-starter/internal/analysis"
 	"github.com/initialcapacity/ai-starter/internal/app"
-	"github.com/initialcapacity/ai-starter/internal/jobs"
+	"github.com/initialcapacity/ai-starter/internal/collection"
 	"github.com/initialcapacity/ai-starter/pkg/testsupport"
 	"github.com/initialcapacity/ai-starter/pkg/websupport"
 	"github.com/stretchr/testify/assert"
@@ -22,7 +23,7 @@ func TestCollectionRuns(t *testing.T) {
 		_ = server.Stop()
 	}(server)
 
-	gateway := jobs.NewCollectionRunsGateway(testDb.DB)
+	gateway := collection.NewCollectionRunsGateway(testDb.DB)
 	_, err := gateway.Create(34, 56, 78, 9)
 	require.NoError(t, err)
 
@@ -47,7 +48,7 @@ func TestAnalysisRuns(t *testing.T) {
 		_ = server.Stop()
 	}(server)
 
-	gateway := jobs.NewAnalysisRunsGateway(testDb.DB)
+	gateway := analysis.NewAnalysisRunsGateway(testDb.DB)
 	_, err := gateway.Create(34, 56, 9)
 	require.NoError(t, err)
 

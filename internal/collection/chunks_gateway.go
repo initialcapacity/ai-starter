@@ -1,4 +1,4 @@
-package collector
+package collection
 
 import (
 	"database/sql"
