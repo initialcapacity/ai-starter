@@ -50,7 +50,8 @@ func triggerAnalyze(ctx context.Context, e event.Event) error {
 	db := dbsupport.CreateConnection(databaseUrl)
 	chunksGateway := collection.NewChunksGateway(db)
 	embeddingsGateway := analysis.NewEmbeddingsGateway(db)
-	aiClient := ai.NewClient(openAiKey, openAiEndpoint)
+	options := ai.LLMOptions{ChatModel: "gpt-4o", EmbeddingsModel: "text-embedding-3-large", Temperature: 1}
+	aiClient := ai.NewClient(openAiKey, openAiEndpoint, options)
 	runsGateway := analysis.NewRunsGateway(db)
 
 	a := analysis.NewAnalyzer(chunksGateway, embeddingsGateway, aiClient, runsGateway)

@@ -14,7 +14,8 @@ func Handlers(aiClient ai.Client, db *sql.DB) func(mux *http.ServeMux) {
 	collectionRunsGateway := collection.NewRunsGateway(db)
 	analysisRunsGateway := analysis.NewRunsGateway(db)
 	embeddingsGateway := analysis.NewEmbeddingsGateway(db)
-	queryService := query.NewService(embeddingsGateway, aiClient)
+	responsesGateway := query.NewResponsesGateway(db)
+	queryService := query.NewService(embeddingsGateway, aiClient, responsesGateway)
 
 	return func(mux *http.ServeMux) {
 		mux.HandleFunc("GET /", Index())
@@ -22,6 +23,7 @@ func Handlers(aiClient ai.Client, db *sql.DB) func(mux *http.ServeMux) {
 		mux.HandleFunc("GET /health", Health)
 		mux.HandleFunc("GET /jobs/collections", CollectionRuns(collectionRunsGateway))
 		mux.HandleFunc("GET /jobs/analyses", AnalysisRuns(analysisRunsGateway))
+		mux.HandleFunc("GET /query_responses", QueryResponses(responsesGateway))
 
 		static, _ := fs.Sub(Resources, "resources/static")
 		fileServer := http.FileServer(http.FS(static))

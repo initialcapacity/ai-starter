@@ -66,6 +66,13 @@ func TestIntegration(t *testing.T) {
 	postBody := readBody(t, postResponse)
 	assert.Contains(t, postBody, "http://localhost:8123/pickles")
 	assert.Contains(t, postBody, "</html>")
+
+	queriesResponse, err := client.Get("http://localhost:8234/query_responses")
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, queriesResponse.StatusCode)
+	queriesBody := readBody(t, queriesResponse)
+	assert.Contains(t, queriesBody, "http://localhost:8123/pickles")
+	assert.Contains(t, queriesBody, "tell me about pickles")
 }
 
 func createIntegrationDatabase(t *testing.T) {

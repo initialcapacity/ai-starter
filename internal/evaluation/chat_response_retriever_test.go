@@ -20,7 +20,7 @@ func TestChatResponseRetriever_Retrieve(t *testing.T) {
 	testDb.Execute("insert into chunks (id, data_id, content) values ('bbbbbbbb-2f3f-4bc9-8dba-ba397156cc16', 'aaaaaaaa-2f3f-4bc9-8dba-ba397156cc16','a chunk')")
 	testDb.Execute("insert into embeddings (chunk_id, embedding) values ('bbbbbbbb-2f3f-4bc9-8dba-ba397156cc16', $1)", pgvector.NewVector(testsupport.CreateVector(0)))
 
-	queryService := query.NewService(analysis.NewEmbeddingsGateway(testDb.DB), fakeAi{})
+	queryService := query.NewService(analysis.NewEmbeddingsGateway(testDb.DB), fakeAi{}, query.NewResponsesGateway(testDb.DB))
 
 	retriever := evaluation.NewChatResponseRetriever(queryService)
 
@@ -51,6 +51,14 @@ func TestChatResponseRetriever_Retrieve(t *testing.T) {
 type fakeAi struct {
 	embeddingError  error
 	completionError error
+}
+
+func (f fakeAi) Options() ai.LLMOptions {
+	return ai.LLMOptions{
+		ChatModel:       "gpt-test",
+		EmbeddingsModel: "embeddings-test-medium",
+		Temperature:     1,
+	}
 }
 
 func (f fakeAi) CreateEmbedding(_ context.Context, _ string) ([]float32, error) {

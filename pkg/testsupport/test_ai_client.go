@@ -13,5 +13,9 @@ func NewTestAiClient(openAiEndpoint string) ai.Client {
 		log.Fatal(fmt.Errorf("unable to create Open AI client: %w", err))
 	}
 
-	return ai.Client{OpenAiClient: openAiClient}
+	return ai.Client{OpenAiClient: openAiClient, LLMOptions: ai.LLMOptions{
+		ChatModel:       "gpt-test-1",
+		EmbeddingsModel: "embeddings-test-medium",
+		Temperature:     1,
+	}}
 }

@@ -68,7 +68,7 @@ main {
 }
 
 section {
-    max-width: 50rem;
+    max-width: 75rem;
     margin-inline: auto;
     padding: var(--body-padding);
 }

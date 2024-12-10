@@ -12,25 +12,35 @@ import (
 	"log/slog"
 )
 
-type Client struct {
-	OpenAiClient *azopenai.Client
+type LLMOptions struct {
+	ChatModel       string
+	EmbeddingsModel string
+	Temperature     float32
 }
 
-func NewClient(openAiKey, openAiEndpoint string) Client {
+type Client struct {
+	OpenAiClient *azopenai.Client
+	LLMOptions   LLMOptions
+}
+
+func NewClient(openAiKey, openAiEndpoint string, options LLMOptions) Client {
 	keyCredential := azcore.NewKeyCredential(openAiKey)
 	openAiClient, err := azopenai.NewClientForOpenAI(openAiEndpoint, keyCredential, nil)
 	if err != nil {
 		log.Fatal(fmt.Errorf("unable to create Open AI client: %w", err))
 	}
 
-	return Client{OpenAiClient: openAiClient}
+	return Client{OpenAiClient: openAiClient, LLMOptions: options}
+}
+
+func (client Client) Options() LLMOptions {
+	return client.LLMOptions
 }
 
 func (client Client) CreateEmbedding(ctx context.Context, text string) ([]float32, error) {
-	model := "text-embedding-3-large"
 	embeddings, err := client.OpenAiClient.GetEmbeddings(ctx, azopenai.EmbeddingsOptions{
 		Input:          []string{text},
-		DeploymentName: &model,
+		DeploymentName: &client.LLMOptions.EmbeddingsModel,
 	}, nil)
 	if err != nil {
 		return nil, fmt.Errorf("unable to get embeddings: %w", err)
@@ -40,10 +50,10 @@ func (client Client) CreateEmbedding(ctx context.Context, text string) ([]float3
 }
 
 func (client Client) GetChatCompletion(ctx context.Context, messages []ChatMessage) (chan string, error) {
-	model := "gpt-4o"
 	chatResponse, streamError := client.OpenAiClient.GetChatCompletionsStream(ctx, azopenai.ChatCompletionsStreamOptions{
 		Messages:       toOpenAiMessages(messages),
-		DeploymentName: &model,
+		DeploymentName: &client.LLMOptions.ChatModel,
+		Temperature:    &client.LLMOptions.Temperature,
 	}, nil)
 	if streamError != nil {
 		return nil, fmt.Errorf("unable to get completions: %w", streamError)
@@ -77,10 +87,9 @@ func (client Client) GetChatCompletion(ctx context.Context, messages []ChatMessa
 }
 
 func (client Client) GetJsonChatCompletion(ctx context.Context, messages []ChatMessage, schemaName string, schemaDescription string, jsonSchema string) (string, error) {
-	model := "gpt-4o"
 	chatResponse, err := client.OpenAiClient.GetChatCompletions(ctx, azopenai.ChatCompletionsOptions{
 		Messages:       toOpenAiMessages(messages),
-		DeploymentName: &model,
+		DeploymentName: &client.LLMOptions.ChatModel,
 		ResponseFormat: &azopenai.ChatCompletionsJSONSchemaResponseFormat{
 			JSONSchema: &azopenai.ChatCompletionsJSONSchemaResponseFormatJSONSchema{
 				Name:        &schemaName,
@@ -89,6 +98,7 @@ func (client Client) GetJsonChatCompletion(ctx context.Context, messages []ChatM
 				Strict:      to.Ptr(true),
 			},
 		},
+		Temperature: &client.LLMOptions.Temperature,
 	}, nil)
 	if err != nil {
 		return "", fmt.Errorf("unable to get JSON completions: %w", err)

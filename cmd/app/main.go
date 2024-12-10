@@ -15,7 +15,8 @@ func main() {
 	openAiKey := websupport.RequireEnvironmentVariable[string]("OPEN_AI_KEY")
 	databaseUrl := websupport.RequireEnvironmentVariable[string]("DATABASE_URL")
 
-	aiClient := ai.NewClient(openAiKey, openAiEndpoint)
+	options := ai.LLMOptions{ChatModel: "gpt-4o", EmbeddingsModel: "text-embedding-3-large", Temperature: 1}
+	aiClient := ai.NewClient(openAiKey, openAiEndpoint, options)
 	db := dbsupport.CreateConnection(databaseUrl)
 
 	server := websupport.NewServer(app.Handlers(aiClient, db))

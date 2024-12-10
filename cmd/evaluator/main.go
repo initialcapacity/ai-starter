@@ -27,10 +27,16 @@ func main() {
 	openAiKey := websupport.RequireEnvironmentVariable[string]("OPEN_AI_KEY")
 	databaseUrl := websupport.RequireEnvironmentVariable[string]("DATABASE_URL")
 
-	aiClient := ai.NewClient(openAiKey, openAiEndpoint)
 	db := dbsupport.CreateConnection(databaseUrl)
 	embeddingsGateway := analysis.NewEmbeddingsGateway(db)
-	queryService := query.NewService(embeddingsGateway, aiClient)
+	responsesGateway := query.NewResponsesGateway(db)
+	options := ai.LLMOptions{
+		ChatModel:       "gpt-4o",
+		EmbeddingsModel: "text-embedding-3-large",
+		Temperature:     1,
+	}
+	aiClient := ai.NewClient(openAiKey, openAiEndpoint, options)
+	queryService := query.NewService(embeddingsGateway, aiClient, responsesGateway)
 	aiScorer := evaluation.NewAiScorer(aiClient)
 
 	retriever := evaluation.NewChatResponseRetriever(queryService)

@@ -1,0 +1,37 @@
+{{- template "base" .}}
+{{- define "main"}}
+    <section>
+        <h1>Query Responses</h1>
+
+        <div class="table-scroll-wrapper">
+            <table>
+                <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>System Prompt</td>
+                    <td>User Query</td>
+                    <td>Source</td>
+                    <td>Response</td>
+                    <td>Model</td>
+                    <td>Temperature</td>
+                    <td>Time</td>
+                </tr>
+                </thead>
+                <tbody>
+                {{range .QueryResponses}}
+                    <tr>
+                        <td>{{.Id}}</td>
+                        <td>{{.SystemPrompt}}</td>
+                        <td>{{.UserQuery}}</td>
+                        <td>{{.Source}}</td>
+                        <td>{{.Response}}</td>
+                        <td>{{.Model}}</td>
+                        <td>{{.Temperature}}</td>
+                        <td>{{.CreatedAt}}</td>
+                    </tr>
+                {{end}}
+                </tbody>
+            </table>
+        </div>
+    </section>
+{{- end}}
