@@ -54,7 +54,8 @@ Use the following article for context: %s`, record.Content)
 			builder.WriteString(part)
 			monitoredResponse <- part
 		}
-		_, storeResponseErr := q.responsesGateway.Create(systemPrompt, query, record.Source, builder.String(), q.aiClient.Options().ChatModel, q.aiClient.Options().Temperature)
+		llmOptions := q.aiClient.Options()
+		_, storeResponseErr := q.responsesGateway.Create(systemPrompt, query, record.Source, builder.String(), llmOptions.ChatModel, llmOptions.EmbeddingsModel, llmOptions.Temperature)
 		if storeResponseErr != nil {
 			slog.Error("unable to store query response", slog.Any("error", storeResponseErr))
 		}

@@ -14,8 +14,8 @@ import (
 func TestQueryResponses_Get(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
 	defer testDb.Close()
-	testDb.Execute(`insert into query_responses (id, system_prompt, user_query, source, response, model, temperature)
-			values ('11111111-2f3f-4bc9-8dba-ba397156cc16', 'Hello', 'Say hi', 'https://example.com', 'Hi there', 'gpt-11', 1.2)`)
+	testDb.Execute(`insert into query_responses (id, system_prompt, user_query, source, response, chat_model, embeddings_model, temperature)
+			values ('11111111-2f3f-4bc9-8dba-ba397156cc16', 'Hello', 'Say hi', 'https://example.com', 'Hi there', 'gpt-11','text-embeddings-test',  1.2)`)
 
 	server := websupport.NewServer(app.Handlers(testsupport.NewTestAiClient(""), testDb.DB))
 	port, _ := server.Start("localhost", 0)
@@ -35,14 +35,15 @@ func TestQueryResponses_Get(t *testing.T) {
 	assert.Contains(t, body, "https://example.com")
 	assert.Contains(t, body, "Hi there")
 	assert.Contains(t, body, "gpt-11")
+	assert.Contains(t, body, "text-embeddings-test")
 	assert.Contains(t, body, "1.2")
 }
 
 func TestShowQueryResponse_Get(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
 	defer testDb.Close()
-	testDb.Execute(`insert into query_responses (id, system_prompt, user_query, source, response, model, temperature)
-			values ('11111111-2f3f-4bc9-8dba-ba397156cc16', 'Hello', 'Say hi', 'https://example.com', 'Hi there', 'gpt-11', 1.2)`)
+	testDb.Execute(`insert into query_responses (id, system_prompt, user_query, source, response, chat_model, embeddings_model, temperature)
+			values ('11111111-2f3f-4bc9-8dba-ba397156cc16', 'Hello', 'Say hi', 'https://example.com', 'Hi there', 'gpt-11', 'text-embeddings-test', 1.2)`)
 
 	server := websupport.NewServer(app.Handlers(testsupport.NewTestAiClient(""), testDb.DB))
 	port, _ := server.Start("localhost", 0)
@@ -62,5 +63,6 @@ func TestShowQueryResponse_Get(t *testing.T) {
 	assert.Contains(t, body, "https://example.com")
 	assert.Contains(t, body, "Hi there")
 	assert.Contains(t, body, "gpt-11")
+	assert.Contains(t, body, "text-embeddings-test")
 	assert.Contains(t, body, "1.2")
 }

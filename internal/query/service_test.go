@@ -43,7 +43,7 @@ Use the following article for context: a chunk`, responses[0].SystemPrompt)
 	assert.Equal(t, "Does this sound good?", responses[0].UserQuery)
 	assert.Equal(t, "https://example.com", responses[0].Source)
 	assert.Equal(t, "Sounds good", responses[0].Response)
-	assert.Equal(t, "gpt-123", responses[0].Model)
+	assert.Equal(t, "gpt-123", responses[0].ChatModel)
 	assert.Equal(t, float32(2), responses[0].Temperature)
 }
 

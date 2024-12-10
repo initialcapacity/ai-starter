@@ -41,26 +41,28 @@ type queryResponsesModel struct {
 }
 
 type QueryResponse struct {
-	Id           string
-	SystemPrompt string
-	UserQuery    string
-	Source       string
-	Response     string
-	Model        string
-	Temperature  float32
-	CreatedAt    time.Time
+	Id              string
+	SystemPrompt    string
+	UserQuery       string
+	Source          string
+	Response        string
+	ChatModel       string
+	EmbeddingsModel string
+	Temperature     float32
+	CreatedAt       time.Time
 }
 
 func recordToQueryResponse(record query.ResponseRecord) QueryResponse {
 	return QueryResponse{
-		Id:           record.Id,
-		SystemPrompt: truncate(record.SystemPrompt, 100),
-		UserQuery:    truncate(record.UserQuery, 100),
-		Source:       truncate(record.Source, 100),
-		Response:     truncate(record.Response, 100),
-		Model:        record.Model,
-		Temperature:  record.Temperature,
-		CreatedAt:    record.CreatedAt,
+		Id:              record.Id,
+		SystemPrompt:    truncate(record.SystemPrompt, 100),
+		UserQuery:       truncate(record.UserQuery, 100),
+		Source:          truncate(record.Source, 100),
+		Response:        truncate(record.Response, 100),
+		ChatModel:       record.ChatModel,
+		EmbeddingsModel: record.EmbeddingsModel,
+		Temperature:     record.Temperature,
+		CreatedAt:       record.CreatedAt,
 	}
 }
 
