@@ -27,7 +27,7 @@ func TestAnalyzer_Analyze(t *testing.T) {
 	embeddingsGateway := analysis.NewEmbeddingsGateway(testDb.DB)
 	chunksGateway := collection.NewChunksGateway(testDb.DB)
 	aiClient := testsupport.NewTestAiClient(endpoint)
-	runsGateway := analysis.NewAnalysisRunsGateway(testDb.DB)
+	runsGateway := analysis.NewRunsGateway(testDb.DB)
 
 	a := analysis.NewAnalyzer(chunksGateway, embeddingsGateway, aiClient, runsGateway)
 

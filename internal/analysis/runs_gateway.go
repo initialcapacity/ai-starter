@@ -18,7 +18,7 @@ type RunsGateway struct {
 	db *sql.DB
 }
 
-func NewAnalysisRunsGateway(db *sql.DB) *RunsGateway {
+func NewRunsGateway(db *sql.DB) *RunsGateway {
 	return &RunsGateway{db: db}
 }
 

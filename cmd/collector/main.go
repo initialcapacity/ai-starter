@@ -27,7 +27,7 @@ func main() {
 	chunksGateway := collection.NewChunksGateway(db)
 	chunker := ai.NewChunker(t, 6000)
 	chunksService := collection.NewChunksService(chunker, chunksGateway)
-	runsGateway := collection.NewCollectionRunsGateway(db)
+	runsGateway := collection.NewRunsGateway(db)
 
 	c := collection.New(parser, extractor, dataGateway, chunksService, runsGateway)
 

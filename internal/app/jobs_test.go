@@ -23,7 +23,7 @@ func TestCollectionRuns(t *testing.T) {
 		_ = server.Stop()
 	}(server)
 
-	gateway := collection.NewCollectionRunsGateway(testDb.DB)
+	gateway := collection.NewRunsGateway(testDb.DB)
 	_, err := gateway.Create(34, 56, 78, 9)
 	require.NoError(t, err)
 
@@ -48,7 +48,7 @@ func TestAnalysisRuns(t *testing.T) {
 		_ = server.Stop()
 	}(server)
 
-	gateway := analysis.NewAnalysisRunsGateway(testDb.DB)
+	gateway := analysis.NewRunsGateway(testDb.DB)
 	_, err := gateway.Create(34, 56, 9)
 	require.NoError(t, err)
 

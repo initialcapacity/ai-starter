@@ -11,8 +11,8 @@ import (
 )
 
 func Handlers(aiClient ai.Client, db *sql.DB) func(mux *http.ServeMux) {
-	collectionRunsGateway := collection.NewCollectionRunsGateway(db)
-	analysisRunsGateway := analysis.NewAnalysisRunsGateway(db)
+	collectionRunsGateway := collection.NewRunsGateway(db)
+	analysisRunsGateway := analysis.NewRunsGateway(db)
 	embeddingsGateway := analysis.NewEmbeddingsGateway(db)
 	queryService := query.NewService(embeddingsGateway, aiClient)
 

@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func CollectionRuns(gateway *collection.CollectionRunsGateway) http.HandlerFunc {
+func CollectionRuns(gateway *collection.RunsGateway) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		runs, err := gateway.List()
 		if err != nil {
@@ -22,7 +22,7 @@ func CollectionRuns(gateway *collection.CollectionRunsGateway) http.HandlerFunc 
 }
 
 type collectionRunsModel struct {
-	CollectionRuns []collection.CollectionRunRecord
+	CollectionRuns []collection.RunRecord
 }
 
 func AnalysisRuns(gateway *analysis.RunsGateway) http.HandlerFunc {

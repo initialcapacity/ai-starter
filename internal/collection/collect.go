@@ -11,11 +11,11 @@ type Collector struct {
 	extractor     feedsupport.Extractor
 	gateway       *DataGateway
 	chunksService *ChunksService
-	runsGateway   *CollectionRunsGateway
+	runsGateway   *RunsGateway
 }
 
 func New(rssParser feedsupport.Parser, extractor feedsupport.Extractor,
-	gateway *DataGateway, chunksService *ChunksService, runsGateway *CollectionRunsGateway) *Collector {
+	gateway *DataGateway, chunksService *ChunksService, runsGateway *RunsGateway) *Collector {
 	return &Collector{rssParser, extractor, gateway, chunksService, runsGateway}
 }
 

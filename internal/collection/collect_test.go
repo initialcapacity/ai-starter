@@ -41,7 +41,7 @@ func TestCollector_Collect(t *testing.T) {
 	dataGateway := collection.NewDataGateway(testDb.DB)
 	chunksGateway := collection.NewChunksGateway(testDb.DB)
 	chunksService := collection.NewChunksService(DummyChunker{}, chunksGateway)
-	runsGateway := collection.NewCollectionRunsGateway(testDb.DB)
+	runsGateway := collection.NewRunsGateway(testDb.DB)
 
 	collect := collection.New(parser, extractor, dataGateway, chunksService, runsGateway)
 

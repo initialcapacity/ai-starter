@@ -35,7 +35,7 @@ func triggerCollect(ctx context.Context, e event.Event) error {
 	chunksGateway := collection.NewChunksGateway(db)
 	chunker := ai.NewChunker(t, 6000)
 	chunksService := collection.NewChunksService(chunker, chunksGateway)
-	runsGateway := collection.NewCollectionRunsGateway(db)
+	runsGateway := collection.NewRunsGateway(db)
 
 	c := collection.New(parser, extractor, dataGateway, chunksService, runsGateway)
 
@@ -51,7 +51,7 @@ func triggerAnalyze(ctx context.Context, e event.Event) error {
 	chunksGateway := collection.NewChunksGateway(db)
 	embeddingsGateway := analysis.NewEmbeddingsGateway(db)
 	aiClient := ai.NewClient(openAiKey, openAiEndpoint)
-	runsGateway := analysis.NewAnalysisRunsGateway(db)
+	runsGateway := analysis.NewRunsGateway(db)
 
 	a := analysis.NewAnalyzer(chunksGateway, embeddingsGateway, aiClient, runsGateway)
 

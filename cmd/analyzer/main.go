@@ -19,7 +19,7 @@ func main() {
 	chunksGateway := collection.NewChunksGateway(db)
 	embeddingsGateway := analysis.NewEmbeddingsGateway(db)
 	aiClient := ai.NewClient(openAiKey, openAiEndpoint)
-	runsGateway := analysis.NewAnalysisRunsGateway(db)
+	runsGateway := analysis.NewRunsGateway(db)
 
 	a := analysis.NewAnalyzer(chunksGateway, embeddingsGateway, aiClient, runsGateway)
 
