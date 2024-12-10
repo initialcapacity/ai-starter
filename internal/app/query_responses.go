@@ -22,6 +22,20 @@ func QueryResponses(gateway *query.ResponsesGateway) http.HandlerFunc {
 	}
 }
 
+func ShowQueryResponse(gateway *query.ResponsesGateway) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := r.PathValue("id")
+		record, err := gateway.Find(id)
+		if err != nil {
+			slog.Error("Could not find query response", "err", err)
+			w.WriteHeader(404)
+			return
+		}
+
+		_ = websupport.Render(w, Resources, "query_response", showQueryResponseModel{record})
+	}
+}
+
 type queryResponsesModel struct {
 	QueryResponses []QueryResponse
 }
@@ -56,4 +70,8 @@ func truncate(text string, maxLength int) string {
 	} else {
 		return text[:maxLength-3] + "..."
 	}
+}
+
+type showQueryResponseModel struct {
+	Response query.ResponseRecord
 }

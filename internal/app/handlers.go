@@ -24,6 +24,7 @@ func Handlers(aiClient ai.Client, db *sql.DB) func(mux *http.ServeMux) {
 		mux.HandleFunc("GET /jobs/collections", CollectionRuns(collectionRunsGateway))
 		mux.HandleFunc("GET /jobs/analyses", AnalysisRuns(analysisRunsGateway))
 		mux.HandleFunc("GET /query_responses", QueryResponses(responsesGateway))
+		mux.HandleFunc("GET /query_responses/{id}", ShowQueryResponse(responsesGateway))
 
 		static, _ := fs.Sub(Resources, "resources/static")
 		fileServer := http.FileServer(http.FS(static))

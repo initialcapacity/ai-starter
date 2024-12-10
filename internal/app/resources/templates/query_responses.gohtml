@@ -20,7 +20,7 @@
                 <tbody>
                 {{range .QueryResponses}}
                     <tr>
-                        <td>{{.Id}}</td>
+                        <td><a href="/query_responses/{{.Id}}">{{.Id}}</a></td>
                         <td>{{.SystemPrompt}}</td>
                         <td>{{.UserQuery}}</td>
                         <td>{{.Source}}</td>

@@ -38,6 +38,17 @@ func (g *ResponsesGateway) Create(systemPrompt string, userQuery string, source 
 	)
 }
 
+func (g *ResponsesGateway) Find(id string) (ResponseRecord, error) {
+	return dbsupport.QueryOne(
+		g.db,
+		`select id, system_prompt, user_query, source, response, model, temperature, created_at 
+			from query_responses
+			where id = $1`,
+		func(row *sql.Row, record *ResponseRecord) error {
+			return row.Scan(&record.Id, &record.SystemPrompt, &record.UserQuery, &record.Source, &record.Response, &record.Model, &record.Temperature, &record.CreatedAt)
+		}, id)
+}
+
 func (g *ResponsesGateway) List() ([]ResponseRecord, error) {
 	return dbsupport.Query(
 		g.db,

@@ -55,3 +55,31 @@ func TestResponsesGateway_List(t *testing.T) {
 	assert.Equal(t, float32(1), records[0].Temperature)
 	assert.Equal(t, records[1].Id, "11111111-3c62-4174-a53c-f317f49ba2fa")
 }
+
+func TestResponsesGateway_Find(t *testing.T) {
+	testDb := testsupport.NewTestDb(t)
+	defer testDb.Close()
+	gateway := query.NewResponsesGateway(testDb.DB)
+
+	testDb.Execute("insert into query_responses (id, system_prompt, user_query, source, response, model, temperature) values ('11111111-3c62-4174-a53c-f317f49ba2fa', 'hello', 'what is up?', 'https://example.com', 'Not much', 'gpt-42', 1)")
+
+	record, err := gateway.Find("11111111-3c62-4174-a53c-f317f49ba2fa")
+	require.NoError(t, err)
+
+	assert.Equal(t, record.Id, "11111111-3c62-4174-a53c-f317f49ba2fa")
+	assert.Equal(t, "hello", record.SystemPrompt)
+	assert.Equal(t, "what is up?", record.UserQuery)
+	assert.Equal(t, "https://example.com", record.Source)
+	assert.Equal(t, "Not much", record.Response)
+	assert.Equal(t, "gpt-42", record.Model)
+	assert.Equal(t, float32(1), record.Temperature)
+}
+
+func TestResponsesGateway_FindNotFound(t *testing.T) {
+	testDb := testsupport.NewTestDb(t)
+	defer testDb.Close()
+	gateway := query.NewResponsesGateway(testDb.DB)
+
+	_, err := gateway.Find("bbaaaadd-3c62-4174-a53c-f317f49ba2fa")
+	require.Error(t, err)
+}
