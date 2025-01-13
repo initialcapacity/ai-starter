@@ -145,22 +145,21 @@ jobs:
           workload_identity_provider: "${{ vars.GCP_WORKLOAD_IDENTITY_POOL_ID }}"
           service_account: "${{ vars.GCP_SERVICE_ACCOUNT }}"
       - uses: google-github-actions/setup-gcloud@v2
-      - name: migrate Cloud SQL
-        run: |
-          curl https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.11.0/cloud-sql-proxy.linux.amd64 --output cloud-sql-proxy
-          chmod +x cloud-sql-proxy
-          sudo mv cloud-sql-proxy /usr/bin/cloud-sql-proxy
-      - name: migrate
-        env:
-          DATABASE_URL: ${{ secrets.MIGRATION_DATABASE_URL }}
-        run: |
-          cloud-sql-proxy --port 6000 ${{ vars.GCP_PROJECT_ID }}:us-central1:ai-starter-db &
-          sleep 6
-          go run ./cmd/migrate
+      - name: Deploy
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          job: ai-starter-migrate
+          image: gcr.io/${{ vars.GCP_PROJECT_ID }}/ai-starter/app:${{ github.sha }}
+          region: us-central1
+          flags: --command=migrate --set-cloudsql-instances=ai-starter-db
   deploy-app:
     runs-on: ubuntu-latest
     needs: [ migrate ]
+    permissions:
+      contents: "read"
+      id-token: "write"
     steps:
+      - uses: actions/checkout@v4
       - uses: google-github-actions/auth@v2
         with:
           workload_identity_provider: "${{ vars.GCP_WORKLOAD_IDENTITY_POOL_ID }}"
@@ -172,39 +171,44 @@ jobs:
           service: ai-starter-app
           image: gcr.io/${{ vars.GCP_PROJECT_ID }}/ai-starter/app:${{ github.sha }}
           region: us-central1
-          flags: --allow-unauthenticated --platform managed
+          flags: --allow-unauthenticated --platform managed --set-cloudsql-instances=ai-starter-db
   deploy-collector:
     runs-on: ubuntu-latest
     needs: [ migrate ]
+    permissions:
+      contents: "read"
+      id-token: "write"
     steps:
+      - uses: actions/checkout@v4
       - uses: google-github-actions/auth@v2
         with:
           workload_identity_provider: "${{ vars.GCP_WORKLOAD_IDENTITY_POOL_ID }}"
           service_account: "${{ vars.GCP_SERVICE_ACCOUNT }}"
       - uses: google-github-actions/setup-gcloud@v2
-      - name: deploy
-        run: |-
-          gcloud functions deploy collector \
-            --gen2 \
-            --region=us-central1 \
-            --runtime=go122 \
-            --entry-point=collector \
-            --trigger-topic=collector
+      - name: Deploy
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          job: ai-starter-collector
+          image: gcr.io/${{ vars.GCP_PROJECT_ID }}/ai-starter/app:${{ github.sha }}
+          region: us-central1
+          flags: --command=collector --set-cloudsql-instances=ai-starter-db
   deploy-analyzer:
     runs-on: ubuntu-latest
     needs: [ migrate ]
+    permissions:
+      contents: "read"
+      id-token: "write"
     steps:
+      - uses: actions/checkout@v4
       - uses: google-github-actions/auth@v2
         with:
           workload_identity_provider: "${{ vars.GCP_WORKLOAD_IDENTITY_POOL_ID }}"
           service_account: "${{ vars.GCP_SERVICE_ACCOUNT }}"
       - uses: google-github-actions/setup-gcloud@v2
-      - name: deploy
-        run: |-
-          gcloud functions deploy analyzer \
-            --gen2 \
-            --region=us-central1 \
-            --runtime=go122 \
-            --entry-point=analyzer \
-            --trigger-topic=analyzer
-
+      - name: Deploy
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          job: ai-starter-analyzer
+          image: gcr.io/${{ vars.GCP_PROJECT_ID }}/ai-starter/app:${{ github.sha }}
+          region: us-central1
+          flags: --command=analyzer --set-cloudsql-instances=ai-starter-db
