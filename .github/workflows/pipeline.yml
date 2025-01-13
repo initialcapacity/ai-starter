@@ -152,6 +152,9 @@ jobs:
           image: gcr.io/${{ vars.GCP_PROJECT_ID }}/ai-starter/app:${{ github.sha }}
           region: us-central1
           flags: --command=migrate --set-cloudsql-instances=ai-starter-db
+      - name: Migrate
+        run: |
+          gcloud run jobs execute ai-starter-migrate
   deploy-app:
     runs-on: ubuntu-latest
     needs: [ migrate ]
