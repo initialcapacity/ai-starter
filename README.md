@@ -120,5 +120,5 @@ The integration test script runs the collector and analyzer, then tests the app 
 
 ```shell
 source .env
-go test ./cmd/integrationtest -tags=integration
+go test ./cmd/integrationtest -count=1 -tags=integration
 ```
