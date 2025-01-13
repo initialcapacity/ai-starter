@@ -29,15 +29,15 @@ func Query(queryService *query.Service) http.HandlerFunc {
 			return
 		}
 
-		query := r.Form.Get("query")
-		result, err := queryService.FetchResponse(r.Context(), query)
+		userQuery := r.Form.Get("query")
+		result, err := queryService.FetchResponse(r.Context(), userQuery)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
 		_ = websupport.Render(w, Resources, "response", model{
-			Query:    query,
+			Query:    userQuery,
 			Response: deferrable.New(w, result.Response),
 			Source:   result.Source,
 		})
