@@ -128,7 +128,7 @@ jobs:
       - uses: google-github-actions/setup-gcloud@v2
       - name: build
         run: |
-          gcloud builds submit --pack image=gcr.io/${{ vars.GCP_PROJECT_ID }}/ai-starter/app:${{ github.sha }},builder=gcr.io/buildpacks/builder:google-22,env=GOOGLE_BUILDABLE=cmd/app/main.go
+          gcloud builds submit --tag gcr.io/${{ vars.GCP_PROJECT_ID }}/ai-starter/app:${{ github.sha }}
   migrate:
     runs-on: ubuntu-latest
     needs: [ build-app ]
