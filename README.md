@@ -122,3 +122,15 @@ The integration test script runs the collector and analyzer, then tests the app 
 source .env
 go test ./cmd/integrationtest -count=1 -tags=integration
 ```
+
+
+## Evaluation
+
+Run an evaluation against a populated database of articles and embeddings.
+
+```shell
+source .env
+go run ./cmd/evaluator
+```
+
+View the results in a csv ([scores.csv](scores.csv)) or a markdown file ([scores.md](scores.md)).
