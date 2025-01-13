@@ -15,6 +15,18 @@ func main() {
 	databaseUrl := websupport.RequireEnvironmentVariable[string]("DATABASE_URL")
 	migrationsLocation := websupport.EnvironmentVariable("MIGRATIONS_LOCATION", "file://./databases/starter")
 
+	migration := createMigration(databaseUrl, migrationsLocation)
+	err := migration.Up()
+	if errors.Is(err, migrate.ErrNoChange) {
+		log.Printf("no new migrations detected: %s\n", err)
+	} else if err != nil {
+		log.Fatalf("unable to migrate %s, %s", databaseUrl, err)
+	}
+
+	log.Printf("successfully migrated %s\n", databaseUrl)
+}
+
+func createMigration(databaseUrl, migrationsLocation string) *migrate.Migrate {
 	db := dbsupport.CreateConnection(databaseUrl)
 	driver, err := pgx.WithInstance(db, &pgx.Config{})
 	if err != nil {
@@ -27,14 +39,7 @@ func main() {
 	}
 
 	migration.Log = logger{}
-	err = migration.Up()
-	if errors.Is(err, migrate.ErrNoChange) {
-		log.Printf("no new migrations detected: %s\n", err)
-	} else if err != nil {
-		log.Fatalf("unable to migrate %s, %s", databaseUrl, err)
-	}
-
-	log.Printf("successfully migrated %s\n", databaseUrl)
+	return migration
 }
 
 type logger struct{}
