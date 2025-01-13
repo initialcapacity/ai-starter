@@ -95,8 +95,8 @@ context for a query to the [OpenAI Chat Completion API](https://platform.openai.
 1.  Create and migrate the local databases.
     ```shell
     psql postgres < ./databases/create_databases.sql
-    DATABASE_URL="postgres://starter:starter@localhost:5432/starter_development?sslmode=disable" go run ./cmd/migrate
-    DATABASE_URL="postgres://starter:starter@localhost:5432/starter_test?sslmode=disable" go run ./cmd/migrate
+    DATABASE_URL="user=starter password=starter database=starter_development host=localhost" go run ./cmd/migrate
+    DATABASE_URL="user=starter password=starter database=starter_test host=localhost" go run ./cmd/migrate
     ```
 
 1.  Copy the example environment file and fill in the necessary values.
