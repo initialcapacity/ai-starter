@@ -5,7 +5,7 @@ A starter application that shows a data collector architecture for [retrieval au
 ## Technology stack
 
 This codebase is written [Go](https://go.dev/) and runs on Google's [Cloud Run](https://cloud.google.com/run) and
-[Cloud Functions](https://cloud.google.com/functions).
+[Cloud Run Jobs](https://cloud.google.com/run/docs/quickstarts/jobs/create-execute).
 It uses Go's built-in [server](https://pkg.go.dev/net/http) and [templates](https://pkg.go.dev/html/template), along
 with Azure's [OpenAI Client](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/ai/azopenai).
 It stores data in [PostgreSQL](https://www.postgresql.org/) and uses [pgvector](https://github.com/pgvector/pgvector) to
@@ -52,8 +52,8 @@ flowchart LR
     embeddings([OpenAI embeddings])
     docs(["RSS feeds"])
     db[("PostgreSQL + pgvector")]
-    collector["Data Collector (Cloud Function)"]
-    analyzer["Data Analyzer (Cloud Function)"]
+    collector["Data Collector (Cloud Run Job)"]
+    analyzer["Data Analyzer (Cloud Run Job)"]
     
     collector -- fetch documents --> docs
     collector -- save documents --> db

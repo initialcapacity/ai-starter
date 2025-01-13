@@ -4,6 +4,7 @@
 
     ```shell
     export PROJECT_ID={google project id}
+    export PROJECT_NUMBER={google project number}
     ```
 
 1.  Create a service account for the pipeline.
@@ -17,7 +18,6 @@
      run.googleapis.com \
      cloudbuild.googleapis.com \
      artifactregistry.googleapis.com \
-     cloudfunctions.googleapis.com \
      eventarc.googleapis.com \
      cloudresourcemanager.googleapis.com \
      compute.googleapis.com \
@@ -73,8 +73,6 @@
     gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:github-service-account@${PROJECT_ID}.iam.gserviceaccount.com" \
         --role="roles/run.admin"
     gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:github-service-account@${PROJECT_ID}.iam.gserviceaccount.com" \
-        --role="roles/cloudfunctions.admin"
-    gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:github-service-account@${PROJECT_ID}.iam.gserviceaccount.com" \
         --role="roles/viewer"
     gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:github-service-account@${PROJECT_ID}.iam.gserviceaccount.com" \
         --role="roles/iam.serviceAccountUser"
@@ -89,12 +87,22 @@
         --filter="bindings.members:github-service-account@${PROJECT_ID}.iam.gserviceaccount.com"
     ```
 
-
-1.  Create topics
+1.  Create schedulers.
     ```shell
-    gcloud pubsub topics create collector
-    gcloud pubsub topics create analyzer
-    ``` 
+    gcloud scheduler jobs create http collection-schedule \
+        --location us-central1 \
+        --schedule "0 */1 * * *" \
+        --uri "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${PROJECT_ID}/jobs/ai-starter-collector:run" \
+        --http-method POST \
+        --oauth-service-account-email "${PROJECT_NUMBER}-compute@developer.gserviceaccount.com"
+
+    gcloud scheduler jobs create http analysis-schedule \
+        --location us-central1 \
+        --schedule "10 */1 * * *" \
+        --uri "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${PROJECT_ID}/jobs/ai-starter-analyzer:run" \
+        --http-method POST \
+        --oauth-service-account-email "${PROJECT_NUMBER}-compute@developer.gserviceaccount.com"
+    ```
 
 ## Variables
 
