@@ -9,4 +9,6 @@ RUN go build -o /usr/local/bin/collector ./cmd/collector
 RUN go build -o /usr/local/bin/analyzer ./cmd/analyzer
 RUN go build -o /usr/local/bin/migrate ./cmd/migrate
 
+RUN rm -rf /app/*
+
 ENTRYPOINT ["app"]
