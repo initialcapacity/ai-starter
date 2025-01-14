@@ -13,5 +13,8 @@ RUN go build -o build/migrate ./cmd/migrate
 RUN go build -o build/pastevaluator ./cmd/pastevaluator
 
 FROM alpine:latest
+WORKDIR /app
 COPY --from=build /app/build/* /usr/local/bin/
+RUN mkdir -p databases/starter
+COPY --from=build /app/databases/starter/*.sql ./databases/starter/
 ENTRYPOINT ["app"]
