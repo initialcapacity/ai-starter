@@ -60,3 +60,15 @@ func (g *ResponsesGateway) List() ([]ResponseRecord, error) {
 			return row.Scan(&record.Id, &record.SystemPrompt, &record.UserQuery, &record.Source, &record.Response, &record.ChatModel, &record.EmbeddingsModel, &record.Temperature, &record.CreatedAt)
 		})
 }
+
+func (g *ResponsesGateway) ListMissingScores() ([]ResponseRecord, error) {
+	return dbsupport.Query(
+		g.db,
+		`select r.id, r.system_prompt, r.user_query, r.source, r.response, r.chat_model, r.embeddings_model, r.temperature, r.created_at 
+			from query_responses r
+				left join response_scores e on e.query_response_id = r.id
+				where e.id is null`,
+		func(row *sql.Rows, record *ResponseRecord) error {
+			return row.Scan(&record.Id, &record.SystemPrompt, &record.UserQuery, &record.Source, &record.Response, &record.ChatModel, &record.EmbeddingsModel, &record.Temperature, &record.CreatedAt)
+		})
+}
