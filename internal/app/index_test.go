@@ -1,10 +1,8 @@
 package app_test
 
 import (
-	"fmt"
 	"github.com/initialcapacity/ai-starter/internal/app"
 	"github.com/initialcapacity/ai-starter/pkg/testsupport"
-	"github.com/initialcapacity/ai-starter/pkg/websupport"
 	"github.com/pgvector/pgvector-go"
 	"github.com/stretchr/testify/assert"
 	"io"
@@ -14,13 +12,9 @@ import (
 )
 
 func TestIndex_Get(t *testing.T) {
-	server := websupport.NewServer(app.Handlers(testsupport.NewTestAiClient(""), nil))
-	port, _ := server.Start("localhost", 0)
-	defer func(server *websupport.Server) {
-		_ = server.Stop()
-	}(server)
+	appEndpoint := testsupport.StartTestServer(t, app.Handlers(testsupport.NewTestAiClient(""), nil))
 
-	resp, err := http.Get(fmt.Sprintf("http://localhost:%d", port))
+	resp, err := http.Get(appEndpoint)
 	assert.NoError(t, err)
 
 	bytes, err := io.ReadAll(resp.Body)
@@ -40,13 +34,9 @@ func TestIndex_Post(t *testing.T) {
 	testDb.Execute("insert into chunks (id, data_id, content) values ('bbbbbbbb-2f3f-4bc9-8dba-ba397156cc16', 'aaaaaaaa-2f3f-4bc9-8dba-ba397156cc16','a chunk')")
 	testDb.Execute("insert into embeddings (chunk_id, embedding) values ('bbbbbbbb-2f3f-4bc9-8dba-ba397156cc16', $1)", pgvector.NewVector(testsupport.CreateVector(0)))
 
-	server := websupport.NewServer(app.Handlers(testsupport.NewTestAiClient(aiEndpoint), testDb.DB))
-	port, _ := server.Start("localhost", 0)
-	defer func(server *websupport.Server) {
-		_ = server.Stop()
-	}(server)
+	appEndpoint := testsupport.StartTestServer(t, app.Handlers(testsupport.NewTestAiClient(aiEndpoint), testDb.DB))
 
-	resp, err := http.Post(fmt.Sprintf("http://localhost:%d", port), "application/x-www-form-urlencoded", strings.NewReader("query=what%20do%20you%20think"))
+	resp, err := http.Post(appEndpoint, "application/x-www-form-urlencoded", strings.NewReader("query=what%20do%20you%20think"))
 	assert.NoError(t, err)
 
 	bytes, err := io.ReadAll(resp.Body)

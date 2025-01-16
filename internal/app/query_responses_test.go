@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/initialcapacity/ai-starter/internal/app"
 	"github.com/initialcapacity/ai-starter/pkg/testsupport"
-	"github.com/initialcapacity/ai-starter/pkg/websupport"
 	"github.com/stretchr/testify/assert"
 	"io"
 	"net/http"
@@ -16,13 +15,9 @@ func TestQueryResponses_Get(t *testing.T) {
 	testDb.Execute(`insert into query_responses (id, system_prompt, user_query, source, response, chat_model, embeddings_model, temperature)
 			values ('11111111-2f3f-4bc9-8dba-ba397156cc16', 'Hello', 'Say hi', 'https://example.com', 'Hi there', 'gpt-11','text-embeddings-test',  1.2)`)
 
-	server := websupport.NewServer(app.Handlers(testsupport.NewTestAiClient(""), testDb.DB))
-	port, _ := server.Start("localhost", 0)
-	defer func(server *websupport.Server) {
-		_ = server.Stop()
-	}(server)
+	appEndpoint := testsupport.StartTestServer(t, app.Handlers(testsupport.NewTestAiClient(""), testDb.DB))
 
-	resp, err := http.Get(fmt.Sprintf("http://localhost:%d/query_responses", port))
+	resp, err := http.Get(fmt.Sprintf("%s/query_responses", appEndpoint))
 	assert.NoError(t, err)
 
 	bytes, err := io.ReadAll(resp.Body)
@@ -43,13 +38,9 @@ func TestShowQueryResponse_Get(t *testing.T) {
 	testDb.Execute(`insert into query_responses (id, system_prompt, user_query, source, response, chat_model, embeddings_model, temperature)
 			values ('11111111-2f3f-4bc9-8dba-ba397156cc16', 'Hello', 'Say hi', 'https://example.com', 'Hi there', 'gpt-11', 'text-embeddings-test', 1.2)`)
 
-	server := websupport.NewServer(app.Handlers(testsupport.NewTestAiClient(""), testDb.DB))
-	port, _ := server.Start("localhost", 0)
-	defer func(server *websupport.Server) {
-		_ = server.Stop()
-	}(server)
+	appEndpoint := testsupport.StartTestServer(t, app.Handlers(testsupport.NewTestAiClient(""), testDb.DB))
 
-	resp, err := http.Get(fmt.Sprintf("http://localhost:%d/query_responses/11111111-2f3f-4bc9-8dba-ba397156cc16", port))
+	resp, err := http.Get(fmt.Sprintf("%s/query_responses/11111111-2f3f-4bc9-8dba-ba397156cc16", appEndpoint))
 	assert.NoError(t, err)
 
 	bytes, err := io.ReadAll(resp.Body)

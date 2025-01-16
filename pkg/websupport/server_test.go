@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-func TestCreate(t *testing.T) {
+func TestServer(t *testing.T) {
 	server := websupport.NewServer(func(mux *http.ServeMux) {
 		testsupport.Handle(mux, "GET /", "You passed the test")
 	})

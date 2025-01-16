@@ -10,5 +10,9 @@ import (
 func TestHealth(t *testing.T) {
 	server := websupport.NewServer(app.Handlers(testsupport.NewTestAiClient(""), nil))
 	port, _ := server.Start("localhost", 0)
+	defer func(server *websupport.Server) {
+		_ = server.Stop()
+	}(server)
+
 	testsupport.AssertHealthy(t, port, "/health")
 }
