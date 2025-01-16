@@ -56,7 +56,7 @@ func (tdb *TestDb) QueryMap(statement string, arguments ...any) []map[string]any
 	for rows.Next() {
 		values := make([]any, len(columns))
 		valuePointers := make([]any, len(columns))
-		for i, _ := range values {
+		for i := range values {
 			valuePointers[i] = &values[i]
 		}
 
