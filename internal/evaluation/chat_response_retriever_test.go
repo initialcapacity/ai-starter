@@ -14,7 +14,6 @@ import (
 
 func TestChatResponseRetriever_Retrieve(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
-	defer testDb.Close()
 
 	testDb.Execute("insert into data (id, source, content) values ('aaaaaaaa-2f3f-4bc9-8dba-ba397156cc16', 'https://example.com', 'some content')")
 	testDb.Execute("insert into chunks (id, data_id, content) values ('bbbbbbbb-2f3f-4bc9-8dba-ba397156cc16', 'aaaaaaaa-2f3f-4bc9-8dba-ba397156cc16','a chunk')")

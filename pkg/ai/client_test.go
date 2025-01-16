@@ -10,10 +10,9 @@ import (
 )
 
 func TestClient_CreateEmbedding(t *testing.T) {
-	endpoint, server := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
+	endpoint := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
 		testsupport.HandleCreateEmbedding(mux, []int{1, 2, 3, 4})
 	})
-	defer testsupport.StopTestServer(t, server)
 
 	client := testsupport.NewTestAiClient(endpoint)
 	result, err := client.CreateEmbedding(context.Background(), "some text")
@@ -23,10 +22,9 @@ func TestClient_CreateEmbedding(t *testing.T) {
 }
 
 func TestClient_GetChatCompletion(t *testing.T) {
-	endpoint, server := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
+	endpoint := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
 		testsupport.HandleGetStreamCompletion(mux, "Sounds good")
 	})
-	defer testsupport.StopTestServer(t, server)
 
 	client := testsupport.NewTestAiClient(endpoint)
 	completion, err := client.GetChatCompletion(context.Background(), []ai.ChatMessage{})
@@ -36,10 +34,9 @@ func TestClient_GetChatCompletion(t *testing.T) {
 }
 
 func TestClient_GetJsonChatCompletion(t *testing.T) {
-	endpoint, server := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
+	endpoint := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
 		testsupport.HandleGetCompletion(mux, `{\"some\": \"json\"}`)
 	})
-	defer testsupport.StopTestServer(t, server)
 
 	client := testsupport.NewTestAiClient(endpoint)
 	completion, err := client.GetJsonChatCompletion(context.Background(), []ai.ChatMessage{}, "someName", "a description", "{}")

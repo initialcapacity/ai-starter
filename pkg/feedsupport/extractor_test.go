@@ -9,7 +9,7 @@ import (
 )
 
 func TestExtractor_FullText(t *testing.T) {
-	endpoint, server := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
+	endpoint := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
 		testsupport.Handle(mux, "/", `
 				<html lang="en">
 					<body>
@@ -20,7 +20,6 @@ func TestExtractor_FullText(t *testing.T) {
 				</html>
 			`)
 	})
-	defer testsupport.StopTestServer(t, server)
 	extractor := feedsupport.NewExtractor(http.Client{})
 
 	text, err := extractor.FullText(endpoint)

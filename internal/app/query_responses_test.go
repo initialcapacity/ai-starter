@@ -13,7 +13,6 @@ import (
 
 func TestQueryResponses_Get(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
-	defer testDb.Close()
 	testDb.Execute(`insert into query_responses (id, system_prompt, user_query, source, response, chat_model, embeddings_model, temperature)
 			values ('11111111-2f3f-4bc9-8dba-ba397156cc16', 'Hello', 'Say hi', 'https://example.com', 'Hi there', 'gpt-11','text-embeddings-test',  1.2)`)
 
@@ -41,7 +40,6 @@ func TestQueryResponses_Get(t *testing.T) {
 
 func TestShowQueryResponse_Get(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
-	defer testDb.Close()
 	testDb.Execute(`insert into query_responses (id, system_prompt, user_query, source, response, chat_model, embeddings_model, temperature)
 			values ('11111111-2f3f-4bc9-8dba-ba397156cc16', 'Hello', 'Say hi', 'https://example.com', 'Hi there', 'gpt-11', 'text-embeddings-test', 1.2)`)
 

@@ -10,7 +10,6 @@ import (
 
 func TestRunsGateway_Create(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
-	defer testDb.Close()
 	gateway := collection.NewRunsGateway(testDb.DB)
 
 	record, err := gateway.Create(3, 4, 5, 6)
@@ -32,7 +31,6 @@ func TestRunsGateway_Create(t *testing.T) {
 
 func TestRunsGateway_List(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
-	defer testDb.Close()
 	gateway := collection.NewRunsGateway(testDb.DB)
 
 	testDb.Execute("insert into collection_runs (feeds_collected, articles_collected, chunks_collected, errors) values (2, 3, 4, 5)")

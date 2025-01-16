@@ -16,7 +16,6 @@ import (
 
 func TestCollectionRuns(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
-	defer testDb.Close()
 	server := websupport.NewServer(app.Handlers(testsupport.NewTestAiClient(""), testDb.DB))
 	port, _ := server.Start("localhost", 0)
 	defer func(server *websupport.Server) {
@@ -41,7 +40,6 @@ func TestCollectionRuns(t *testing.T) {
 
 func TestAnalysisRuns(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
-	defer testDb.Close()
 	server := websupport.NewServer(app.Handlers(testsupport.NewTestAiClient(""), testDb.DB))
 	port, _ := server.Start("localhost", 0)
 	defer func(server *websupport.Server) {

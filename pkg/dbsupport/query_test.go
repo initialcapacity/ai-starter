@@ -10,7 +10,6 @@ import (
 
 func TestQueryOne(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
-	defer testDb.Close()
 
 	result, err := dbsupport.QueryOne(testDb.DB, "select 1", func(row *sql.Row, number *int) error {
 		return row.Scan(number)
@@ -22,7 +21,6 @@ func TestQueryOne(t *testing.T) {
 
 func TestQuery(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
-	defer testDb.Close()
 
 	result, err := dbsupport.Query(testDb.DB, "select * from generate_series(1, 5)", func(rows *sql.Rows, number *int) error {
 		return rows.Scan(number)

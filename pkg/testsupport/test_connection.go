@@ -22,14 +22,16 @@ func NewTestDb(t *testing.T) *TestDb {
 		assert.NoError(t, err, "unable to create test database")
 	})
 
-	return &TestDb{
+	testDb := &TestDb{
 		DB:         dbsupport.CreateConnection(fmt.Sprintf("postgres://starter:starter@localhost:5432/%s?sslmode=disable", testDbName)),
 		t:          t,
 		testDbName: testDbName,
 	}
+	t.Cleanup(testDb.close)
+	return testDb
 }
 
-func (tdb *TestDb) Close() {
+func (tdb *TestDb) close() {
 	err := tdb.DB.Close()
 	assert.NoError(tdb.t, err)
 

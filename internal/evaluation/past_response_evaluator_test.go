@@ -10,7 +10,6 @@ import (
 
 func TestPastResponseEvaluator_Run(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
-	defer testDb.Close()
 
 	responsesGateway := query.NewResponsesGateway(testDb.DB)
 	scoresGateway := evaluation.NewScoresGateway(testDb.DB)

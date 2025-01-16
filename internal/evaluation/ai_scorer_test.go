@@ -9,12 +9,11 @@ import (
 )
 
 func TestAiScorer_Score(t *testing.T) {
-	endpoint, server := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
+	endpoint := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
 		testsupport.HandleGetCompletion(mux,
 			`{ \"Relevance\": 10, \"Correctness\": 20, \"AppropriateTone\": 30, \"Politeness\": 40 }`,
 		)
 	})
-	defer testsupport.StopTestServer(t, server)
 	client := testsupport.NewTestAiClient(endpoint)
 	scorer := evaluation.NewAiScorer(client)
 

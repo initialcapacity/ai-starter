@@ -30,14 +30,11 @@ func TestIndex_Get(t *testing.T) {
 }
 
 func TestIndex_Post(t *testing.T) {
-	aiEndpoint, aiServer := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
+	aiEndpoint := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
 		testsupport.HandleGetStreamCompletion(mux, "Sounds good")
 		testsupport.HandleCreateEmbedding(mux, testsupport.CreateVector(0))
 	})
-	defer testsupport.StopTestServer(t, aiServer)
-
 	testDb := testsupport.NewTestDb(t)
-	defer testDb.Close()
 
 	testDb.Execute("insert into data (id, source, content) values ('aaaaaaaa-2f3f-4bc9-8dba-ba397156cc16', 'https://example.com', 'some content')")
 	testDb.Execute("insert into chunks (id, data_id, content) values ('bbbbbbbb-2f3f-4bc9-8dba-ba397156cc16', 'aaaaaaaa-2f3f-4bc9-8dba-ba397156cc16','a chunk')")

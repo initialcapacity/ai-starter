@@ -9,10 +9,9 @@ import (
 )
 
 func TestParser_AllLinks(t *testing.T) {
-	endpoint, server := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
+	endpoint := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
 		testsupport.HandleRssFeed(mux, "https://example.com")
 	})
-	defer testsupport.StopTestServer(t, server)
 	parser := feedsupport.NewParser(http.Client{})
 
 	links, err := parser.AllLinks(endpoint)

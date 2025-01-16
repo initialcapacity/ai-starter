@@ -11,7 +11,6 @@ import (
 
 func TestDataGateway_Save(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
-	defer testDb.Close()
 
 	dataGateway := collection.NewDataGateway(testDb.DB)
 
@@ -28,7 +27,6 @@ func TestDataGateway_Save(t *testing.T) {
 
 func TestDataGateway_Exists(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
-	defer testDb.Close()
 
 	dataGateway := collection.NewDataGateway(testDb.DB)
 

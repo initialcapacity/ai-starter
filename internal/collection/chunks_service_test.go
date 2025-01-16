@@ -11,7 +11,6 @@ import (
 
 func TestChunksService_SaveChunks(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
-	defer testDb.Close()
 
 	chunksGateway := collection.NewChunksGateway(testDb.DB)
 	chunksService := collection.NewChunksService(DummyChunker{}, chunksGateway)

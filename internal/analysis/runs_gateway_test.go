@@ -10,7 +10,6 @@ import (
 
 func TestRunsGateway_Create(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
-	defer testDb.Close()
 	gateway := analysis.NewRunsGateway(testDb.DB)
 
 	record, err := gateway.Create(3, 4, 5)
@@ -30,7 +29,6 @@ func TestRunsGateway_Create(t *testing.T) {
 
 func TestRunsGateway_List(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
-	defer testDb.Close()
 	gateway := analysis.NewRunsGateway(testDb.DB)
 
 	testDb.Execute("insert into analysis_runs (chunks_analyzed, embeddings_created, errors) values (2, 3, 4)")

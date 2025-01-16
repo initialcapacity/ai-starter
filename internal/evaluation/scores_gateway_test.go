@@ -9,7 +9,6 @@ import (
 
 func TestScoresGateway_Save(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
-	defer testDb.Close()
 
 	testDb.Execute(`insert into query_responses (id, system_prompt, user_query, source, response,
                     		chat_model, temperature, embeddings_model)

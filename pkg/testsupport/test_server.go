@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func StartTestServer(t *testing.T, handlers websupport.Handlers) (string, *websupport.Server) {
+func StartTestServer(t *testing.T, handlers websupport.Handlers) string {
 	server := websupport.NewServer(func(mux *http.ServeMux) {
 		handlers(mux)
 		mux.HandleFunc("GET /health-just-for-tests", func(w http.ResponseWriter, r *http.Request) {
@@ -19,10 +19,12 @@ func StartTestServer(t *testing.T, handlers websupport.Handlers) (string, *websu
 	port, _ := server.Start("localhost", 0)
 	AssertHealthy(t, port, "/health-just-for-tests")
 
-	return fmt.Sprintf("http://localhost:%d", port), server
+	t.Cleanup(func() { stopTestServer(t, server) })
+
+	return fmt.Sprintf("http://localhost:%d", port)
 }
 
-func StopTestServer(t *testing.T, server *websupport.Server) {
+func stopTestServer(t *testing.T, server *websupport.Server) {
 	err := server.Stop()
 	if err != nil {
 		t.Errorf("unable to stop server: %s", err)

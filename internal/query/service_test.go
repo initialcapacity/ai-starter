@@ -15,7 +15,6 @@ import (
 
 func TestQueryService_FetchResponse(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
-	defer testDb.Close()
 	insertData(testDb)
 
 	responsesGateway := query.NewResponsesGateway(testDb.DB)
@@ -49,7 +48,6 @@ Use the following article for context: a chunk`, responses[0].SystemPrompt)
 
 func TestQueryService_FetchResponse_EmbeddingError(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
-	defer testDb.Close()
 	insertData(testDb)
 	service := query.NewService(analysis.NewEmbeddingsGateway(testDb.DB), fakeAi{embeddingError: errors.New("bad news")}, query.NewResponsesGateway(testDb.DB))
 
@@ -60,7 +58,6 @@ func TestQueryService_FetchResponse_EmbeddingError(t *testing.T) {
 
 func TestQueryService_FetchResponse_NoEmbeddings(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
-	defer testDb.Close()
 	service := query.NewService(analysis.NewEmbeddingsGateway(testDb.DB), fakeAi{}, query.NewResponsesGateway(testDb.DB))
 
 	_, err := service.FetchResponse(context.Background(), "Does this sound good?")
@@ -70,7 +67,6 @@ func TestQueryService_FetchResponse_NoEmbeddings(t *testing.T) {
 
 func TestQueryService_FetchResponse_CompletionError(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
-	defer testDb.Close()
 	insertData(testDb)
 	service := query.NewService(analysis.NewEmbeddingsGateway(testDb.DB), fakeAi{completionError: errors.New("bad news")}, query.NewResponsesGateway(testDb.DB))
 

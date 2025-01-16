@@ -10,7 +10,6 @@ import (
 
 func TestResponsesGateway_Create(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
-	defer testDb.Close()
 	gateway := query.NewResponsesGateway(testDb.DB)
 
 	record, err := gateway.Create("hello", "what's up?", "https://example.com", "Not much", "gpt-42", "text-embeddings-test", 1)
@@ -38,7 +37,6 @@ func TestResponsesGateway_Create(t *testing.T) {
 
 func TestResponsesGateway_List(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
-	defer testDb.Close()
 	gateway := query.NewResponsesGateway(testDb.DB)
 
 	testDb.Execute("insert into query_responses (id, system_prompt, user_query, source, response, chat_model, embeddings_model, temperature) values ('11111111-3c62-4174-a53c-f317f49ba2fa', 'hi', 'what is going on?', 'https://example.com/1', 'A lot', 'gpt-43', 'text-embeddings-test', 1.5)")
@@ -61,7 +59,6 @@ func TestResponsesGateway_List(t *testing.T) {
 
 func TestResponsesGateway_Find(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
-	defer testDb.Close()
 	gateway := query.NewResponsesGateway(testDb.DB)
 
 	testDb.Execute("insert into query_responses (id, system_prompt, user_query, source, response, chat_model, embeddings_model, temperature) values ('11111111-3c62-4174-a53c-f317f49ba2fa', 'hello', 'what is up?', 'https://example.com', 'Not much', 'gpt-42', 'text-embeddings-test', 1)")
@@ -81,7 +78,6 @@ func TestResponsesGateway_Find(t *testing.T) {
 
 func TestResponsesGateway_FindNotFound(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
-	defer testDb.Close()
 	gateway := query.NewResponsesGateway(testDb.DB)
 
 	_, err := gateway.Find("bbaaaadd-3c62-4174-a53c-f317f49ba2fa")
@@ -90,7 +86,6 @@ func TestResponsesGateway_FindNotFound(t *testing.T) {
 
 func TestResponsesGateway_ListMissingScores(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
-	defer testDb.Close()
 	gateway := query.NewResponsesGateway(testDb.DB)
 
 	testDb.Execute("insert into query_responses (id, system_prompt, user_query, source, response, chat_model, embeddings_model, temperature) values ('11111111-3c62-4174-a53c-f317f49ba2fa', 'hi', 'what is going on?', 'https://example.com/1', 'A lot', 'gpt-43', 'text-embeddings-test', 1.5)")

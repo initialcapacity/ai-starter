@@ -13,11 +13,11 @@ import (
 )
 
 func TestCollector_Collect(t *testing.T) {
-	feedEndpoint, feedServer := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
+	feedEndpoint := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
 		testsupport.Handle(mux, "/feed1", "<html><h1>some text from feed 1</h1></html>")
 		testsupport.Handle(mux, "/feed2", "<html><h1>some text from feed 2</h1></html>")
 	})
-	rssEndpoint, rssServer := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
+	rssEndpoint := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
 		testsupport.Handle(mux, "/", fmt.Sprintf(`
 				<rss>
 					<channel>
@@ -27,13 +27,8 @@ func TestCollector_Collect(t *testing.T) {
 				</rss>
 			`, feedEndpoint, feedEndpoint))
 	})
-	defer func() {
-		testsupport.StopTestServer(t, rssServer)
-		testsupport.StopTestServer(t, feedServer)
-	}()
 
 	testDb := testsupport.NewTestDb(t)
-	defer testDb.Close()
 	client := http.Client{}
 
 	extractor := feedsupport.NewExtractor(client)
