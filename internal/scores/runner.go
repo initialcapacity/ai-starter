@@ -1,28 +1,31 @@
-package evaluation
+package scores
 
-import "log/slog"
+import (
+	"github.com/initialcapacity/ai-starter/internal/query"
+	"log/slog"
+)
 
 type Scorer interface {
-	Score(response ChatResponse) (ResponseScore, error)
+	Score(response query.ChatResponse) (ResponseScore, error)
 }
 
 type ScoredResponse struct {
-	Response ChatResponse
+	Response query.ChatResponse
 	Score    ResponseScore
 }
 
-type ScoreRunner struct {
+type Runner struct {
 	scorer Scorer
 }
 
-func NewScoreRunner(scorer Scorer) ScoreRunner {
-	return ScoreRunner{scorer: scorer}
+func NewRunner(scorer Scorer) Runner {
+	return Runner{scorer: scorer}
 }
 
-func (s ScoreRunner) Score(responses chan ChatResponse) []ScoredResponse {
+func (r Runner) Score(responses chan query.ChatResponse) []ScoredResponse {
 	scores := make([]ScoredResponse, 0)
 	for response := range responses {
-		score, err := s.scorer.Score(response)
+		score, err := r.scorer.Score(response)
 		if err != nil {
 			slog.Error("failed to score response",
 				"query", response.Query,

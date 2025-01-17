@@ -3,16 +3,17 @@ package evaluation
 import (
 	"errors"
 	"github.com/initialcapacity/ai-starter/internal/query"
+	"github.com/initialcapacity/ai-starter/internal/scores"
 	"log/slog"
 )
 
 type PastResponseEvaluator struct {
 	responsesGateway *query.ResponsesGateway
-	scoresGateway    *ScoresGateway
-	scorer           Scorer
+	scoresGateway    *scores.Gateway
+	scorer           scores.Scorer
 }
 
-func NewPastResponseEvaluator(responsesGateway *query.ResponsesGateway, scoresGateway *ScoresGateway, scorer Scorer) PastResponseEvaluator {
+func NewPastResponseEvaluator(responsesGateway *query.ResponsesGateway, scoresGateway *scores.Gateway, scorer scores.Scorer) PastResponseEvaluator {
 	return PastResponseEvaluator{
 		responsesGateway: responsesGateway,
 		scoresGateway:    scoresGateway,
@@ -29,7 +30,7 @@ func (l PastResponseEvaluator) Run() error {
 
 	errs := make([]error, 0)
 	for _, response := range responses {
-		score, scoreErr := l.scorer.Score(ChatResponse{
+		score, scoreErr := l.scorer.Score(query.ChatResponse{
 			Query:    response.UserQuery,
 			Response: response.Response,
 			Source:   response.Source,

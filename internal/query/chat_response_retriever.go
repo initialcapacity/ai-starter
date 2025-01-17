@@ -1,8 +1,7 @@
-package evaluation
+package query
 
 import (
 	"context"
-	"github.com/initialcapacity/ai-starter/internal/query"
 	"log/slog"
 	"strings"
 	"sync"
@@ -15,10 +14,10 @@ type ChatResponse struct {
 }
 
 type ChatResponseRetriever struct {
-	queryService *query.Service
+	queryService *Service
 }
 
-func NewChatResponseRetriever(queryService *query.Service) *ChatResponseRetriever {
+func NewChatResponseRetriever(queryService *Service) *ChatResponseRetriever {
 	return &ChatResponseRetriever{queryService}
 }
 

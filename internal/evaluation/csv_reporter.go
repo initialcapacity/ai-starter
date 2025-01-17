@@ -1,6 +1,7 @@
 package evaluation
 
 import (
+	"github.com/initialcapacity/ai-starter/internal/scores"
 	"github.com/initialcapacity/ai-starter/pkg/csvsupport"
 	"log"
 	"os"
@@ -19,7 +20,9 @@ func (r CSVReporter) WriteToCSV(filename string, lines [][]string) error {
 	rows = append(rows, lines...)
 
 	csvFile, err := os.Create(filename)
-	defer csvFile.Close()
+	defer func(csvFile *os.File) {
+		_ = csvFile.Close()
+	}(csvFile)
 	if err != nil {
 		log.Fatalln("failed to open file", err)
 	}
@@ -27,7 +30,7 @@ func (r CSVReporter) WriteToCSV(filename string, lines [][]string) error {
 	return csvsupport.WriteCSV(csvFile, rows)
 }
 
-func (r CSVReporter) Lines(results []ScoredResponse) [][]string {
+func (r CSVReporter) Lines(results []scores.ScoredResponse) [][]string {
 	lines := make([][]string, 0)
 
 	for _, result := range results {

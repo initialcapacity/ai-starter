@@ -4,6 +4,7 @@ import (
 	"github.com/initialcapacity/ai-starter/internal/analysis"
 	"github.com/initialcapacity/ai-starter/internal/evaluation"
 	"github.com/initialcapacity/ai-starter/internal/query"
+	"github.com/initialcapacity/ai-starter/internal/scores"
 	"github.com/initialcapacity/ai-starter/pkg/ai"
 	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
 	"github.com/initialcapacity/ai-starter/pkg/websupport"
@@ -27,11 +28,11 @@ func main() {
 	options := ai.LLMOptions{ChatModel: "gpt-4o", EmbeddingsModel: "text-embedding-3-large", Temperature: 1}
 	aiClient := ai.NewClient(openAiKey, "https://api.openai.com/v1", options)
 	queryService := query.NewService(embeddingsGateway, aiClient, responsesGateway)
-	aiScorer := evaluation.NewAiScorer(aiClient)
+	aiScorer := scores.NewAiScorer(aiClient)
 
 	evaluator := evaluation.NewCannedResponseEvaluator(
-		evaluation.NewChatResponseRetriever(queryService),
-		evaluation.NewScoreRunner(aiScorer),
+		query.NewChatResponseRetriever(queryService),
+		scores.NewRunner(aiScorer),
 		evaluation.NewCSVReporter(),
 		evaluation.NewMarkdownReporter(),
 	)

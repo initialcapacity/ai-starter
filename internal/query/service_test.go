@@ -5,7 +5,6 @@ import (
 	"errors"
 	"github.com/initialcapacity/ai-starter/internal/analysis"
 	"github.com/initialcapacity/ai-starter/internal/query"
-	"github.com/initialcapacity/ai-starter/pkg/ai"
 	"github.com/initialcapacity/ai-starter/pkg/testsupport"
 	"github.com/pgvector/pgvector-go"
 	"github.com/stretchr/testify/assert"
@@ -18,7 +17,7 @@ func TestQueryService_FetchResponse(t *testing.T) {
 	insertData(testDb)
 
 	responsesGateway := query.NewResponsesGateway(testDb.DB)
-	service := query.NewService(analysis.NewEmbeddingsGateway(testDb.DB), fakeAi{}, responsesGateway)
+	service := query.NewService(analysis.NewEmbeddingsGateway(testDb.DB), testsupport.FakeAi{}, responsesGateway)
 
 	result, err := service.FetchResponse(context.Background(), "Does this sound good?")
 	assert.NoError(t, err)
@@ -49,7 +48,7 @@ Use the following article for context: a chunk`, responses[0].SystemPrompt)
 func TestQueryService_FetchResponse_EmbeddingError(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
 	insertData(testDb)
-	service := query.NewService(analysis.NewEmbeddingsGateway(testDb.DB), fakeAi{embeddingError: errors.New("bad news")}, query.NewResponsesGateway(testDb.DB))
+	service := query.NewService(analysis.NewEmbeddingsGateway(testDb.DB), testsupport.FakeAi{EmbeddingError: errors.New("bad news")}, query.NewResponsesGateway(testDb.DB))
 
 	_, err := service.FetchResponse(context.Background(), "Does this sound good?")
 
@@ -58,7 +57,7 @@ func TestQueryService_FetchResponse_EmbeddingError(t *testing.T) {
 
 func TestQueryService_FetchResponse_NoEmbeddings(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
-	service := query.NewService(analysis.NewEmbeddingsGateway(testDb.DB), fakeAi{}, query.NewResponsesGateway(testDb.DB))
+	service := query.NewService(analysis.NewEmbeddingsGateway(testDb.DB), testsupport.FakeAi{}, query.NewResponsesGateway(testDb.DB))
 
 	_, err := service.FetchResponse(context.Background(), "Does this sound good?")
 
@@ -68,7 +67,7 @@ func TestQueryService_FetchResponse_NoEmbeddings(t *testing.T) {
 func TestQueryService_FetchResponse_CompletionError(t *testing.T) {
 	testDb := testsupport.NewTestDb(t)
 	insertData(testDb)
-	service := query.NewService(analysis.NewEmbeddingsGateway(testDb.DB), fakeAi{completionError: errors.New("bad news")}, query.NewResponsesGateway(testDb.DB))
+	service := query.NewService(analysis.NewEmbeddingsGateway(testDb.DB), testsupport.FakeAi{CompletionError: errors.New("bad news")}, query.NewResponsesGateway(testDb.DB))
 
 	_, err := service.FetchResponse(context.Background(), "Does this sound good?")
 
@@ -79,39 +78,4 @@ func insertData(testDb *testsupport.TestDb) {
 	testDb.Execute("insert into data (id, source, content) values ('aaaaaaaa-2f3f-4bc9-8dba-ba397156cc16', 'https://example.com', 'some content')")
 	testDb.Execute("insert into chunks (id, data_id, content) values ('bbbbbbbb-2f3f-4bc9-8dba-ba397156cc16', 'aaaaaaaa-2f3f-4bc9-8dba-ba397156cc16','a chunk')")
 	testDb.Execute("insert into embeddings (chunk_id, embedding) values ('bbbbbbbb-2f3f-4bc9-8dba-ba397156cc16', $1)", pgvector.NewVector(testsupport.CreateVector(0)))
-}
-
-type fakeAi struct {
-	embeddingError  error
-	completionError error
-}
-
-func (f fakeAi) Options() ai.LLMOptions {
-	return ai.LLMOptions{
-		ChatModel:       "gpt-123",
-		EmbeddingsModel: "embeddings-test-medium",
-		Temperature:     2,
-	}
-}
-
-func (f fakeAi) CreateEmbedding(_ context.Context, _ string) ([]float32, error) {
-	if f.embeddingError != nil {
-		return nil, f.embeddingError
-	}
-
-	return testsupport.CreateVector(0), nil
-}
-
-func (f fakeAi) GetChatCompletion(_ context.Context, _ []ai.ChatMessage) (chan string, error) {
-	if f.completionError != nil {
-		return nil, f.completionError
-	}
-
-	response := make(chan string)
-	go func() {
-		response <- "Sounds"
-		response <- " good"
-		close(response)
-	}()
-	return response, nil
 }

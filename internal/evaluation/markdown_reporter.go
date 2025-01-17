@@ -2,6 +2,7 @@ package evaluation
 
 import (
 	"fmt"
+	"github.com/initialcapacity/ai-starter/internal/scores"
 	"os"
 	"strings"
 )
@@ -15,7 +16,9 @@ func NewMarkdownReporter() MarkdownReporter {
 
 func (r MarkdownReporter) WriteToFile(filename string, content string) error {
 	file, err := os.Create(filename)
-	defer file.Close()
+	defer func(file *os.File) {
+		_ = file.Close()
+	}(file)
 	if err != nil {
 		return err
 	}
@@ -24,7 +27,7 @@ func (r MarkdownReporter) WriteToFile(filename string, content string) error {
 	return err
 }
 
-func (r MarkdownReporter) Report(results []ScoredResponse) string {
+func (r MarkdownReporter) Report(results []scores.ScoredResponse) string {
 	builder := strings.Builder{}
 
 	builder.WriteString(`# Evaluation Results

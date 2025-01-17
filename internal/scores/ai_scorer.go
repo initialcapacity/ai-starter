@@ -1,9 +1,10 @@
-package evaluation
+package scores
 
 import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/initialcapacity/ai-starter/internal/query"
 	"github.com/initialcapacity/ai-starter/pkg/ai"
 )
 
@@ -19,7 +20,7 @@ func NewAiScorer(aiClient aiClient) AiScorer {
 	return AiScorer{aiClient: aiClient}
 }
 
-func (s AiScorer) Score(response ChatResponse) (score ResponseScore, err error) {
+func (s AiScorer) Score(response query.ChatResponse) (score ResponseScore, err error) {
 	scoreResponse, err := s.aiClient.GetJsonChatCompletion(context.Background(), []ai.ChatMessage{
 		{Role: ai.System, Content: fmt.Sprintf(`
 			You are an expert QA professional. Below is a user's query about technology news, along with an assistant's response.

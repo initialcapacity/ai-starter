@@ -1,11 +1,8 @@
-package evaluation_test
+package query_test
 
 import (
-	"context"
 	"github.com/initialcapacity/ai-starter/internal/analysis"
-	"github.com/initialcapacity/ai-starter/internal/evaluation"
 	"github.com/initialcapacity/ai-starter/internal/query"
-	"github.com/initialcapacity/ai-starter/pkg/ai"
 	"github.com/initialcapacity/ai-starter/pkg/testsupport"
 	"github.com/pgvector/pgvector-go"
 	"github.com/stretchr/testify/assert"
@@ -19,9 +16,9 @@ func TestChatResponseRetriever_Retrieve(t *testing.T) {
 	testDb.Execute("insert into chunks (id, data_id, content) values ('bbbbbbbb-2f3f-4bc9-8dba-ba397156cc16', 'aaaaaaaa-2f3f-4bc9-8dba-ba397156cc16','a chunk')")
 	testDb.Execute("insert into embeddings (chunk_id, embedding) values ('bbbbbbbb-2f3f-4bc9-8dba-ba397156cc16', $1)", pgvector.NewVector(testsupport.CreateVector(0)))
 
-	queryService := query.NewService(analysis.NewEmbeddingsGateway(testDb.DB), fakeAi{}, query.NewResponsesGateway(testDb.DB))
+	queryService := query.NewService(analysis.NewEmbeddingsGateway(testDb.DB), testsupport.FakeAi{}, query.NewResponsesGateway(testDb.DB))
 
-	retriever := evaluation.NewChatResponseRetriever(queryService)
+	retriever := query.NewChatResponseRetriever(queryService)
 
 	queries := []string{
 		"What's new with Kotlin?",
@@ -36,7 +33,7 @@ func TestChatResponseRetriever_Retrieve(t *testing.T) {
 	}
 
 	responsesChannel := retriever.Retrieve(queries)
-	responses := make([]evaluation.ChatResponse, 0)
+	responses := make([]query.ChatResponse, 0)
 	for response := range responsesChannel {
 		responses = append(responses, response)
 	}
@@ -45,39 +42,4 @@ func TestChatResponseRetriever_Retrieve(t *testing.T) {
 	response := responses[0]
 	assert.Equal(t, "Sounds good", response.Response)
 	assert.Equal(t, "https://example.com", response.Source)
-}
-
-type fakeAi struct {
-	embeddingError  error
-	completionError error
-}
-
-func (f fakeAi) Options() ai.LLMOptions {
-	return ai.LLMOptions{
-		ChatModel:       "gpt-test",
-		EmbeddingsModel: "embeddings-test-medium",
-		Temperature:     1,
-	}
-}
-
-func (f fakeAi) CreateEmbedding(_ context.Context, _ string) ([]float32, error) {
-	if f.embeddingError != nil {
-		return nil, f.embeddingError
-	}
-
-	return testsupport.CreateVector(0), nil
-}
-
-func (f fakeAi) GetChatCompletion(_ context.Context, _ []ai.ChatMessage) (chan string, error) {
-	if f.completionError != nil {
-		return nil, f.completionError
-	}
-
-	response := make(chan string)
-	go func() {
-		response <- "Sounds "
-		response <- "good"
-		close(response)
-	}()
-	return response, nil
 }

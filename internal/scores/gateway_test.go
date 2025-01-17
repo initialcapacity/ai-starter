@@ -1,7 +1,7 @@
-package evaluation_test
+package scores_test
 
 import (
-	"github.com/initialcapacity/ai-starter/internal/evaluation"
+	"github.com/initialcapacity/ai-starter/internal/scores"
 	"github.com/initialcapacity/ai-starter/pkg/testsupport"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -15,7 +15,7 @@ func TestScoresGateway_Save(t *testing.T) {
 						values ('07e87e22-7b55-4023-8c67-64204d30a900', 'You are a bot', 'Hi', 'https://example.com', 'Hello',
 							'gpt-11-max', 0.5, 'text-embedding-medium')`)
 
-	scoresGateway := evaluation.NewScoresGateway(testDb.DB)
+	scoresGateway := scores.NewGateway(testDb.DB)
 
 	id, err := scoresGateway.Save("07e87e22-7b55-4023-8c67-64204d30a900", 11, 12, 13, 14)
 	assert.NoError(t, err)

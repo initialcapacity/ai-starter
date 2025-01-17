@@ -1,4 +1,4 @@
-package evaluation
+package scores
 
 type ResponseScore struct {
 	Relevance       int

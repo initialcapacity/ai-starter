@@ -1,7 +1,8 @@
-package evaluation_test
+package scores_test
 
 import (
-	"github.com/initialcapacity/ai-starter/internal/evaluation"
+	"github.com/initialcapacity/ai-starter/internal/query"
+	"github.com/initialcapacity/ai-starter/internal/scores"
 	"github.com/initialcapacity/ai-starter/pkg/testsupport"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -15,16 +16,16 @@ func TestAiScorer_Score(t *testing.T) {
 		)
 	})
 	client := testsupport.NewTestAiClient(endpoint)
-	scorer := evaluation.NewAiScorer(client)
+	scorer := scores.NewAiScorer(client)
 
-	score, err := scorer.Score(evaluation.ChatResponse{
+	score, err := scorer.Score(query.ChatResponse{
 		Query:    "Why is the sky blue",
 		Response: "Because I said so",
 		Source:   "https://sky.example.com",
 	})
 
 	assert.NoError(t, err)
-	assert.Equal(t, evaluation.ResponseScore{
+	assert.Equal(t, scores.ResponseScore{
 		Relevance:       10,
 		Correctness:     20,
 		AppropriateTone: 30,

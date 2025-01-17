@@ -1,19 +1,19 @@
-package evaluation
+package scores
 
 import (
 	"database/sql"
 	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
 )
 
-type ScoresGateway struct {
+type Gateway struct {
 	db *sql.DB
 }
 
-func NewScoresGateway(db *sql.DB) *ScoresGateway {
-	return &ScoresGateway{db: db}
+func NewGateway(db *sql.DB) *Gateway {
+	return &Gateway{db: db}
 }
 
-func (g *ScoresGateway) Save(queryResponseId string, relevance int, correctness int, appropriateTone int, politeness int) (string, error) {
+func (g *Gateway) Save(queryResponseId string, relevance int, correctness int, appropriateTone int, politeness int) (string, error) {
 	return dbsupport.QueryOne(
 		g.db,
 		`insert into response_scores (query_response_id, score, score_version)
