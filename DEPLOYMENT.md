@@ -5,6 +5,8 @@
     ```shell
     export PROJECT_ID={google project id}
     export PROJECT_NUMBER={google project number}
+    export OPEN_AI_KEY={api key}
+    export DATABASE_URL={database url}
     ```
 
 1.  Create a service account for the pipeline.
@@ -21,6 +23,7 @@
      eventarc.googleapis.com \
      cloudresourcemanager.googleapis.com \
      compute.googleapis.com \
+     secretmanager.googleapis.com \
      --project "${PROJECT_ID}"
     gcloud iam service-accounts create github-service-account --project "${PROJECT_ID}"
     ```
@@ -109,6 +112,12 @@
         --uri "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${PROJECT_ID}/jobs/ai-starter-evaluator:run" \
         --http-method POST \
         --oauth-service-account-email "${PROJECT_NUMBER}-compute@developer.gserviceaccount.com"
+    ```
+
+1.  Create secrets.
+    ```shell
+    echo -n "$OPEN_AI_KEY" | gcloud secrets create OPEN_AI_KEY --data-file=-
+    echo -n "$DATABASE_URL" | gcloud secrets create DATABASE_URL --data-file=-
     ```
 
 ## Variables

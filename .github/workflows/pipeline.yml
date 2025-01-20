@@ -152,6 +152,8 @@ jobs:
           image: gcr.io/${{ vars.GCP_PROJECT_ID }}/ai-starter/app:${{ github.sha }}
           region: us-central1
           flags: --command=migrate --set-cloudsql-instances=ai-starter-db --execute-now --wait
+          secrets: |
+            DATABASE_URL=DATABASE_URL:latest
   deploy-app:
     runs-on: ubuntu-latest
     needs: [ migrate ]
@@ -172,6 +174,9 @@ jobs:
           image: gcr.io/${{ vars.GCP_PROJECT_ID }}/ai-starter/app:${{ github.sha }}
           region: us-central1
           flags: --allow-unauthenticated --platform managed --set-cloudsql-instances=ai-starter-db
+          secrets: |
+            DATABASE_URL=DATABASE_URL:latest
+            OPEN_AI_KEY=OPEN_AI_KEY:latest
   deploy-collector:
     runs-on: ubuntu-latest
     needs: [ migrate ]
@@ -192,6 +197,8 @@ jobs:
           image: gcr.io/${{ vars.GCP_PROJECT_ID }}/ai-starter/app:${{ github.sha }}
           region: us-central1
           flags: --command=collector --set-cloudsql-instances=ai-starter-db
+          secrets: |
+            DATABASE_URL=DATABASE_URL:latest
   deploy-analyzer:
     runs-on: ubuntu-latest
     needs: [ migrate ]
@@ -212,6 +219,9 @@ jobs:
           image: gcr.io/${{ vars.GCP_PROJECT_ID }}/ai-starter/app:${{ github.sha }}
           region: us-central1
           flags: --command=analyzer --set-cloudsql-instances=ai-starter-db
+          secrets: |
+            DATABASE_URL=DATABASE_URL:latest
+            OPEN_AI_KEY=OPEN_AI_KEY:latest
   deploy-evaluator:
     runs-on: ubuntu-latest
     needs: [ migrate ]
@@ -232,3 +242,6 @@ jobs:
           image: gcr.io/${{ vars.GCP_PROJECT_ID }}/ai-starter/app:${{ github.sha }}
           region: us-central1
           flags: --command=liveevaluator --set-cloudsql-instances=ai-starter-db
+          secrets: |
+            DATABASE_URL=DATABASE_URL:latest
+            OPEN_AI_KEY=OPEN_AI_KEY:latest
