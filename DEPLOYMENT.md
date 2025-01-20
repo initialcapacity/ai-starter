@@ -120,6 +120,13 @@
     echo -n "$DATABASE_URL" | gcloud secrets create DATABASE_URL --data-file=-
     ```
 
+1.  Allow the default service account to access secrets.
+    ```shell
+    gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+        --member="serviceAccount:${PROJECT_NUMBER}-compute@developer.gserviceaccount.com" \
+        --role='roles/secretmanager.secretAccessor'
+    ```
+
 ## Variables
 
 Repository variables for pipeline
