@@ -28,6 +28,8 @@ func (l PastResponseEvaluator) Run() error {
 		return err
 	}
 
+	slog.Info("found responses", "count", len(responses))
+	successfulEvaluations := 0
 	errs := make([]error, 0)
 	for _, response := range responses {
 		score, scoreErr := l.scorer.Score(query.ChatResponse{
@@ -45,8 +47,11 @@ func (l PastResponseEvaluator) Run() error {
 		if saveErr != nil {
 			slog.Error("failed to save response score", "response", response.Id)
 			errs = append(errs, saveErr)
+		} else {
+			successfulEvaluations++
 		}
 	}
 
+	slog.Info("successful evaluations", "count", successfulEvaluations, "errors", len(errs))
 	return errors.Join(errs...)
 }
