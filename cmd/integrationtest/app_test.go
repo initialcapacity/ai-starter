@@ -33,7 +33,7 @@ func TestIntegration(t *testing.T) {
 	build(t, "collector")
 	build(t, "analyzer")
 	build(t, "app")
-	build(t, "pastevaluator")
+	build(t, "liveevaluator")
 
 	testCtx, cancelCtx := context.WithCancel(context.Background())
 	defer cancelCtx()
@@ -68,7 +68,7 @@ func TestIntegration(t *testing.T) {
 	assert.Contains(t, postBody, "http://localhost:8123/pickles")
 	assert.Contains(t, postBody, "</html>")
 
-	runCommand(t, testCtx, "./build/pastevaluator",
+	runCommand(t, testCtx, "./build/liveevaluator",
 		fmt.Sprintf("DATABASE_URL=%s", dbUrl),
 		fmt.Sprintf("OPEN_AI_KEY=%s", openAiKey))
 

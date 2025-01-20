@@ -10,7 +10,7 @@ RUN go build -o build/app ./cmd/app
 RUN go build -o build/collector ./cmd/collector
 RUN go build -o build/analyzer ./cmd/analyzer
 RUN go build -o build/migrate ./cmd/migrate
-RUN go build -o build/pastevaluator ./cmd/pastevaluator
+RUN go build -o build/liveevaluator ./cmd/liveevaluator
 
 FROM alpine:latest
 WORKDIR /app
