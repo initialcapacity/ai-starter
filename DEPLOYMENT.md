@@ -102,6 +102,13 @@
         --uri "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${PROJECT_ID}/jobs/ai-starter-analyzer:run" \
         --http-method POST \
         --oauth-service-account-email "${PROJECT_NUMBER}-compute@developer.gserviceaccount.com"
+
+    gcloud scheduler jobs create http evaluation-schedule \
+        --location us-central1 \
+        --schedule "0 */1 * * *" \
+        --uri "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${PROJECT_ID}/jobs/ai-starter-evaluator:run" \
+        --http-method POST \
+        --oauth-service-account-email "${PROJECT_NUMBER}-compute@developer.gserviceaccount.com"
     ```
 
 ## Variables
