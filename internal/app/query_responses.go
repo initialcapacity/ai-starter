@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/initialcapacity/ai-starter/internal/query"
+	"github.com/initialcapacity/ai-starter/internal/scores"
 	"github.com/initialcapacity/ai-starter/pkg/slicesupport"
 	"github.com/initialcapacity/ai-starter/pkg/websupport"
 	"log/slog"
@@ -9,35 +9,35 @@ import (
 	"time"
 )
 
-func QueryResponses(gateway *query.ResponsesGateway) http.HandlerFunc {
+func QueryResponses(service *scores.ScoredResponsesService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		records, err := gateway.List()
+		responses, err := service.List()
 		if err != nil {
 			slog.Error("Could not list query responses", "err", err)
 			w.WriteHeader(500)
 			return
 		}
 
-		_ = websupport.Render(w, Resources, "query_responses", queryResponsesModel{slicesupport.Map(records, recordToQueryResponse)})
+		_ = websupport.Render(w, Resources, "query_responses", queryResponsesModel{slicesupport.Map(responses, truncateLongStrings)})
 	}
 }
 
-func ShowQueryResponse(gateway *query.ResponsesGateway) http.HandlerFunc {
+func ShowQueryResponse(service *scores.ScoredResponsesService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
-		record, err := gateway.Find(id)
-		if err != nil {
-			slog.Error("Could not find query response", "err", err)
+		response, found := service.Find(id)
+		if !found {
+			slog.Error("Could not find query response")
 			w.WriteHeader(404)
 			return
 		}
 
-		_ = websupport.Render(w, Resources, "query_response", showQueryResponseModel{record})
+		_ = websupport.Render(w, Resources, "query_response", showQueryResponseModel{response})
 	}
 }
 
 type queryResponsesModel struct {
-	QueryResponses []QueryResponse
+	Responses []scores.ResponseWithScore
 }
 
 type QueryResponse struct {
@@ -52,17 +52,18 @@ type QueryResponse struct {
 	CreatedAt       time.Time
 }
 
-func recordToQueryResponse(record query.ResponseRecord) QueryResponse {
-	return QueryResponse{
-		Id:              record.Id,
-		SystemPrompt:    truncate(record.SystemPrompt, 100),
-		UserQuery:       truncate(record.UserQuery, 100),
-		Source:          truncate(record.Source, 100),
-		Response:        truncate(record.Response, 100),
-		ChatModel:       record.ChatModel,
-		EmbeddingsModel: record.EmbeddingsModel,
-		Temperature:     record.Temperature,
-		CreatedAt:       record.CreatedAt,
+func truncateLongStrings(response scores.ResponseWithScore) scores.ResponseWithScore {
+	return scores.ResponseWithScore{
+		Id:              response.Id,
+		SystemPrompt:    truncate(response.SystemPrompt, 100),
+		UserQuery:       truncate(response.UserQuery, 100),
+		Source:          truncate(response.Source, 100),
+		Response:        truncate(response.Response, 100),
+		ChatModel:       response.ChatModel,
+		EmbeddingsModel: response.EmbeddingsModel,
+		Temperature:     response.Temperature,
+		CreatedAt:       response.CreatedAt,
+		Score:           response.Score,
 	}
 }
 
@@ -75,5 +76,5 @@ func truncate(text string, maxLength int) string {
 }
 
 type showQueryResponseModel struct {
-	Response query.ResponseRecord
+	Response scores.ResponseWithScore
 }

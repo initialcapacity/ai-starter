@@ -7,3 +7,13 @@ func Map[T any, U any](input []T, transformation func(T) U) []U {
 	}
 	return output
 }
+
+func Find[T any](input []T, predicate func(T) bool) (T, bool) {
+	for _, item := range input {
+		if predicate(item) {
+			return item, true
+		}
+	}
+	var emptyResult T
+	return emptyResult, false
+}

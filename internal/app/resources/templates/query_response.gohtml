@@ -29,6 +29,30 @@
         </div>
     </section>
 
+    {{ if .Response.Score }}
+        <section>
+            <h2>Score</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>Relevance</th>
+                    <th>Correctness</th>
+                    <th>Appropriate Tone</th>
+                    <th>Politeness</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{{.Response.Score.Relevance}}</td>
+                    <td>{{.Response.Score.Correctness}}</td>
+                    <td>{{.Response.Score.AppropriateTone}}</td>
+                    <td>{{.Response.Score.Politeness}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+    {{ end }}
+
     <section>
         <h2>Prompt</h2>
 

@@ -16,10 +16,14 @@
                     <td>Embeddings Model</td>
                     <td>Temperature</td>
                     <td>Time</td>
+                    <td>Relevance</td>
+                    <td>Correctness</td>
+                    <td>Appropriate Tone</td>
+                    <td>Politeness</td>
                 </tr>
                 </thead>
                 <tbody>
-                {{range .QueryResponses}}
+                {{range .Responses}}
                     <tr>
                         <td><a href="/query_responses/{{.Id}}">{{.Id}}</a></td>
                         <td>{{.SystemPrompt}}</td>
@@ -30,6 +34,17 @@
                         <td>{{.EmbeddingsModel}}</td>
                         <td>{{.Temperature}}</td>
                         <td>{{.CreatedAt}}</td>
+                        {{ if .Score }}
+                            <td>{{ .Score.Relevance }}</td>
+                            <td>{{ .Score.Correctness }}</td>
+                            <td>{{ .Score.AppropriateTone }}</td>
+                            <td>{{ .Score.Politeness }}</td>
+                        {{ else }}
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        {{ end }}
                     </tr>
                 {{end}}
                 </tbody>
