@@ -11,11 +11,11 @@ import (
 
 type TestDb struct {
 	DB         *sql.DB
-	t          *testing.T
+	t          testing.TB
 	testDbName string
 }
 
-func NewTestDb(t *testing.T) *TestDb {
+func NewTestDb(t testing.TB) *TestDb {
 	testDbName := fmt.Sprintf("starter_test_%d", rand.IntN(1_000_000))
 	WithSuperDb(t, func(superDb *sql.DB) {
 		_, err := superDb.Exec(fmt.Sprintf("create database %s template starter_test", testDbName))
@@ -79,7 +79,7 @@ func (tdb *TestDb) QueryOneMap(statement string, arguments ...any) map[string]an
 	return results[0]
 }
 
-func WithSuperDb(t *testing.T, action func(superDb *sql.DB)) {
+func WithSuperDb(t testing.TB, action func(superDb *sql.DB)) {
 	superDb := dbsupport.CreateConnection("postgres://super_test@localhost:5432/postgres?sslmode=disable")
 	defer func(superDb *sql.DB) {
 		err := superDb.Close()
