@@ -24,10 +24,6 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: "go.mod"
-      - name: Install psql
-        run: |
-          sudo apt-get update
-          sudo apt-get install --yes postgresql-client
       - name: Migrate test database
         env:
           DATABASE_URL: postgres://starter:starter@localhost:5432/starter_test?sslmode=disable
