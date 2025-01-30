@@ -51,10 +51,6 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: "go.mod"
-      - name: Install psql
-        run: |
-          sudo apt-get update
-          sudo apt-get install --yes postgresql-client
       - name: Create database user
         run: |
           psql --host localhost --username postgres < databases/create_databases.sql
@@ -82,10 +78,6 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: "go.mod"
-      - name: Install psql
-        run: |
-          sudo apt-get update
-          sudo apt-get install --yes postgresql-client
       - name: Create database user and run migrations
         env:
           DATABASE_URL: "postgres://starter:starter@localhost:5432/starter_development?sslmode=disable"
