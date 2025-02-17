@@ -89,8 +89,8 @@ context for a query to the [OpenAI Chat Completion API](https://platform.openai.
 
 ## Local development
 
-1.  Install [Go](https://formulae.brew.sh/formula/go), [PostgreSQL 15](https://formulae.brew.sh/formula/postgresql@15), and
-[pgvector](https://github.com/pgvector/pgvector).
+1.  Install [Go](https://formulae.brew.sh/formula/go), [PostgreSQL 17](https://formulae.brew.sh/formula/postgresql@17),
+    and [pgvector](https://github.com/pgvector/pgvector).
 
 1.  Create and migrate the local databases.
     ```shell
