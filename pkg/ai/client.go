@@ -10,6 +10,7 @@ import (
 	"io"
 	"log"
 	"log/slog"
+	"time"
 )
 
 type LLMOptions struct {
@@ -59,26 +60,35 @@ func (client Client) GetChatCompletion(ctx context.Context, messages []ChatMessa
 		return nil, fmt.Errorf("unable to get completions: %w", streamError)
 	}
 
-	response := make(chan string)
+	response := make(chan string, 10)
+	streamingResponseCtx, cancel := context.WithTimeout(ctx, 30*time.Second)
 
 	go func() {
+		defer close(response)
+		defer cancel()
+
 		for {
 			chatCompletions, err := chatResponse.ChatCompletionsStream.Read()
-
 			if err != nil {
 				if !errors.Is(err, io.EOF) {
-					response <- "\n\nAn error occurred. Please try your query again."
+					response <- " ...An error occurred. Please try your query again."
 					slog.Error("error streaming response", "error", err)
 				}
-
-				close(response)
-				break
+				return
 			}
 
-			choice := chatCompletions.Choices[0]
-			content := choice.Delta.Content
+			content := chatCompletions.Choices[0].Delta.Content
 			if content != nil {
-				response <- *content
+				select {
+				case response <- *content:
+				case <-streamingResponseCtx.Done():
+					if errors.Is(streamingResponseCtx.Err(), context.DeadlineExceeded) {
+						response <- " ...Response timed out."
+					}
+
+					slog.Debug("context canceled while sending response")
+					return
+				}
 			}
 		}
 	}()
