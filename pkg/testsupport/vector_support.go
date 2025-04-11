@@ -2,14 +2,20 @@ package testsupport
 
 import (
 	"fmt"
+	"github.com/initialcapacity/ai-starter/pkg/slicesupport"
+	"github.com/pgvector/pgvector-go"
 	"golang.org/x/exp/constraints"
 	"strings"
 )
 
-func CreateVector(oneIndex int) []float32 {
-	embedding := make([]float32, 3072)
+func CreateVector(oneIndex int) []float64 {
+	embedding := make([]float64, 3072)
 	embedding[oneIndex] = 1
 	return embedding
+}
+
+func CreatePgVector(oneIndex int) pgvector.Vector {
+	return pgvector.NewVector(slicesupport.Map(CreateVector(oneIndex), func(i float64) float32 { return float32(i) }))
 }
 
 type Number interface {

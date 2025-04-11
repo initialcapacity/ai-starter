@@ -6,7 +6,6 @@ import (
 	"github.com/initialcapacity/ai-starter/internal/analysis"
 	"github.com/initialcapacity/ai-starter/internal/query"
 	"github.com/initialcapacity/ai-starter/pkg/testsupport"
-	"github.com/pgvector/pgvector-go"
 	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
@@ -77,5 +76,5 @@ func TestQueryService_FetchResponse_CompletionError(t *testing.T) {
 func insertData(testDb *testsupport.TestDb) {
 	testDb.Execute("insert into data (id, source, content) values ('aaaaaaaa-2f3f-4bc9-8dba-ba397156cc16', 'https://example.com', 'some content')")
 	testDb.Execute("insert into chunks (id, data_id, content) values ('bbbbbbbb-2f3f-4bc9-8dba-ba397156cc16', 'aaaaaaaa-2f3f-4bc9-8dba-ba397156cc16','a chunk')")
-	testDb.Execute("insert into embeddings (chunk_id, embedding) values ('bbbbbbbb-2f3f-4bc9-8dba-ba397156cc16', $1)", pgvector.NewVector(testsupport.CreateVector(0)))
+	testDb.Execute("insert into embeddings (chunk_id, embedding) values ('bbbbbbbb-2f3f-4bc9-8dba-ba397156cc16', $1)", testsupport.CreatePgVector(0))
 }

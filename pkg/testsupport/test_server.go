@@ -56,6 +56,7 @@ func AssertHealthy(t *testing.T, port int, path string) {
 
 func Handle(mux *http.ServeMux, path string, responseBody string) {
 	mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
 		_, _ = w.Write([]byte(responseBody))
 	})
 }

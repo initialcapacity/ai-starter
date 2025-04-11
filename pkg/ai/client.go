@@ -2,119 +2,134 @@ package ai
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/Azure/azure-sdk-for-go/sdk/ai/azopenai"
-	"github.com/Azure/azure-sdk-for-go/sdk/azcore"
-	"github.com/Azure/azure-sdk-for-go/sdk/azcore/to"
-	"io"
-	"log"
+	"github.com/invopop/jsonschema"
+	"github.com/openai/openai-go"
+	"github.com/openai/openai-go/option"
+	"github.com/openai/openai-go/packages/param"
+	"github.com/openai/openai-go/shared"
 	"log/slog"
+	"reflect"
 	"time"
 )
 
 type LLMOptions struct {
 	ChatModel       string
 	EmbeddingsModel string
-	Temperature     float32
+	Temperature     float64
 }
 
 type Client struct {
-	OpenAiClient *azopenai.Client
-	LLMOptions   LLMOptions
+	openAiClient openai.Client
+	llmOptions   LLMOptions
 }
 
 func NewClient(openAiKey, openAiEndpoint string, options LLMOptions) Client {
-	keyCredential := azcore.NewKeyCredential(openAiKey)
-	openAiClient, err := azopenai.NewClientForOpenAI(openAiEndpoint, keyCredential, nil)
-	if err != nil {
-		log.Fatal(fmt.Errorf("unable to create Open AI client: %w", err))
-	}
-
-	return Client{OpenAiClient: openAiClient, LLMOptions: options}
+	openAiClient := openai.NewClient(
+		option.WithAPIKey(openAiKey),
+		option.WithBaseURL(openAiEndpoint),
+	)
+	return Client{openAiClient: openAiClient, llmOptions: options}
 }
 
 func (client Client) Options() LLMOptions {
-	return client.LLMOptions
+	return client.llmOptions
 }
 
-func (client Client) CreateEmbedding(ctx context.Context, text string) ([]float32, error) {
-	embeddings, err := client.OpenAiClient.GetEmbeddings(ctx, azopenai.EmbeddingsOptions{
-		Input:          []string{text},
-		DeploymentName: &client.LLMOptions.EmbeddingsModel,
-	}, nil)
+func (client Client) CreateEmbedding(ctx context.Context, text string) ([]float64, error) {
+	response, err := client.openAiClient.Embeddings.New(ctx, openai.EmbeddingNewParams{
+		Input: openai.EmbeddingNewParamsInputUnion{OfString: param.NewOpt(text)},
+		Model: client.llmOptions.EmbeddingsModel,
+	})
 	if err != nil {
 		return nil, fmt.Errorf("unable to get embeddings: %w", err)
 	}
 
-	return embeddings.Data[0].Embedding, nil
+	return response.Data[0].Embedding, nil
 }
 
 func (client Client) GetChatCompletion(ctx context.Context, messages []ChatMessage) (chan string, error) {
-	chatResponse, streamError := client.OpenAiClient.GetChatCompletionsStream(ctx, azopenai.ChatCompletionsStreamOptions{
-		Messages:       toOpenAiMessages(messages),
-		DeploymentName: &client.LLMOptions.ChatModel,
-		Temperature:    &client.LLMOptions.Temperature,
-	}, nil)
-	if streamError != nil {
-		return nil, fmt.Errorf("unable to get completions: %w", streamError)
-	}
+	stream := client.openAiClient.Chat.Completions.NewStreaming(ctx, openai.ChatCompletionNewParams{
+		Messages:    toOpenAiMessages(messages),
+		Model:       client.llmOptions.ChatModel,
+		Temperature: param.NewOpt(client.llmOptions.Temperature),
+	})
 
 	response := make(chan string, 10)
 	streamingResponseCtx, cancel := context.WithTimeout(ctx, 30*time.Second)
 
 	go func() {
+		defer func() { _ = stream.Close() }()
 		defer close(response)
 		defer cancel()
 
-		for {
-			chatCompletions, err := chatResponse.ChatCompletionsStream.Read()
-			if err != nil {
-				if !errors.Is(err, io.EOF) {
-					response <- " ...An error occurred. Please try your query again."
-					slog.Error("error streaming response", "error", err)
+		for stream.Next() {
+			chunk := stream.Current()
+			content := chunk.Choices[0].Delta.Content
+
+			select {
+			case response <- content:
+			case <-streamingResponseCtx.Done():
+				if errors.Is(streamingResponseCtx.Err(), context.DeadlineExceeded) {
+					response <- " ...Response timed out."
 				}
+
+				slog.Debug("context canceled while sending response")
 				return
 			}
+		}
 
-			content := chatCompletions.Choices[0].Delta.Content
-			if content != nil {
-				select {
-				case response <- *content:
-				case <-streamingResponseCtx.Done():
-					if errors.Is(streamingResponseCtx.Err(), context.DeadlineExceeded) {
-						response <- " ...Response timed out."
-					}
-
-					slog.Debug("context canceled while sending response")
-					return
-				}
-			}
+		if err := stream.Err(); err != nil {
+			response <- " ...An error occurred. Please try your query again."
+			slog.Error("error streaming response", "error", err)
 		}
 	}()
 
 	return response, nil
 }
 
-func (client Client) GetJsonChatCompletion(ctx context.Context, messages []ChatMessage, schemaName string, schemaDescription string, jsonSchema string) (string, error) {
-	chatResponse, err := client.OpenAiClient.GetChatCompletions(ctx, azopenai.ChatCompletionsOptions{
-		Messages:       toOpenAiMessages(messages),
-		DeploymentName: &client.LLMOptions.ChatModel,
-		ResponseFormat: &azopenai.ChatCompletionsJSONSchemaResponseFormat{
-			JSONSchema: &azopenai.ChatCompletionsJSONSchemaResponseFormatJSONSchema{
-				Name:        &schemaName,
-				Description: &schemaDescription,
-				Schema:      []byte(jsonSchema),
-				Strict:      to.Ptr(true),
+func (client Client) GetJsonChatCompletion(ctx context.Context, messages []ChatMessage, schemaName string, schemaDescription string, jsonSchema interface{}) (string, error) {
+	response, err := client.openAiClient.Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
+		Messages: toOpenAiMessages(messages),
+		Model:    client.llmOptions.ChatModel,
+		ResponseFormat: openai.ChatCompletionNewParamsResponseFormatUnion{OfJSONSchema: &shared.ResponseFormatJSONSchemaParam{
+			JSONSchema: openai.ResponseFormatJSONSchemaJSONSchemaParam{
+				Name:        schemaName,
+				Description: param.NewOpt(schemaDescription),
+				Schema:      jsonSchema,
 			},
-		},
-		Temperature: &client.LLMOptions.Temperature,
-	}, nil)
+			Type: "json_schema",
+		}},
+		Temperature: param.NewOpt(client.llmOptions.Temperature),
+	})
 	if err != nil {
 		return "", fmt.Errorf("unable to get JSON completions: %w", err)
 	}
 
-	return *chatResponse.ChatCompletions.Choices[0].Message.Content, nil
+	return response.Choices[0].Message.Content, nil
+}
+
+type jsonCompletionClient interface {
+	GetJsonChatCompletion(ctx context.Context, messages []ChatMessage, schemaName string, schemaDescription string, jsonSchema interface{}) (string, error)
+}
+
+func GetJsonChatCompletion[T any](ctx context.Context, client jsonCompletionClient, messages []ChatMessage, schemaName string, schemaDescription string) (T, error) {
+	reflector := jsonschema.Reflector{
+		AllowAdditionalProperties: false,
+		DoNotReference:            true,
+	}
+	var result T
+	schema := reflector.ReflectFromType(reflect.TypeOf(result))
+
+	stringResult, err := client.GetJsonChatCompletion(ctx, messages, schemaName, schemaDescription, schema)
+	if err != nil {
+		return result, err
+	}
+
+	err = json.Unmarshal([]byte(stringResult), &result)
+	return result, err
 }
 
 type Role string
@@ -130,14 +145,16 @@ type ChatMessage struct {
 	Content string
 }
 
-func toOpenAiMessages(messages []ChatMessage) []azopenai.ChatRequestMessageClassification {
-	var result []azopenai.ChatRequestMessageClassification
+func toOpenAiMessages(messages []ChatMessage) []openai.ChatCompletionMessageParamUnion {
+	var result []openai.ChatCompletionMessageParamUnion
 
 	for _, message := range messages {
 		if message.Role == User {
-			result = append(result, &azopenai.ChatRequestUserMessage{Content: azopenai.NewChatRequestUserMessageContent(message.Content)})
+			result = append(result, openai.UserMessage(message.Content))
+		} else if message.Role == Assistant {
+			result = append(result, openai.AssistantMessage(message.Content))
 		} else if message.Role == System {
-			result = append(result, &azopenai.ChatRequestSystemMessage{Content: azopenai.NewChatRequestSystemMessageContent(message.Content)})
+			result = append(result, openai.SystemMessage(message.Content))
 		}
 	}
 

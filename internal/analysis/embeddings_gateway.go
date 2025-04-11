@@ -3,6 +3,7 @@ package analysis
 import (
 	"database/sql"
 	"github.com/initialcapacity/ai-starter/pkg/dbsupport"
+	"github.com/initialcapacity/ai-starter/pkg/slicesupport"
 	"github.com/pgvector/pgvector-go"
 )
 
@@ -28,12 +29,12 @@ func (g *EmbeddingsGateway) UnprocessedIds() ([]string, error) {
 		func(rows *sql.Rows, id *string) error { return rows.Scan(id) })
 }
 
-func (g *EmbeddingsGateway) Save(chunkId string, vector []float32) error {
-	_, err := g.db.Exec("insert into embeddings (chunk_id, embedding) values ($1, $2)", chunkId, pgvector.NewVector(vector))
+func (g *EmbeddingsGateway) Save(chunkId string, vector []float64) error {
+	_, err := g.db.Exec("insert into embeddings (chunk_id, embedding) values ($1, $2)", chunkId, createPgVector(vector))
 	return err
 }
 
-func (g *EmbeddingsGateway) FindSimilar(embedding []float32) (CitedChunkRecord, error) {
+func (g *EmbeddingsGateway) FindSimilar(embedding []float64) (CitedChunkRecord, error) {
 	return dbsupport.QueryOne(
 		g.db,
 		`select c.content, d.source
@@ -44,6 +45,10 @@ func (g *EmbeddingsGateway) FindSimilar(embedding []float32) (CitedChunkRecord, 
 		func(row *sql.Row, record *CitedChunkRecord) error {
 			return row.Scan(&record.Content, &record.Source)
 		},
-		pgvector.NewVector(embedding),
+		createPgVector(embedding),
 	)
+}
+
+func createPgVector(input []float64) pgvector.Vector {
+	return pgvector.NewVector(slicesupport.Map(input, func(i float64) float32 { return float32(i) }))
 }

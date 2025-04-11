@@ -7,7 +7,7 @@ A starter application that shows a data collector architecture for [retrieval au
 This codebase is written [Go](https://go.dev/) and runs on Google's [Cloud Run](https://cloud.google.com/run) and
 [Cloud Run Jobs](https://cloud.google.com/run/docs/quickstarts/jobs/create-execute).
 It uses Go's built-in [server](https://pkg.go.dev/net/http) and [templates](https://pkg.go.dev/html/template), along
-with Azure's [OpenAI Client](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/ai/azopenai).
+with the official [OpenAI Client](https://github.com/openai/openai-go).
 It stores data in [PostgreSQL](https://www.postgresql.org/) and uses [pgvector](https://github.com/pgvector/pgvector) to
 write and query embeddings. 
 A [GitHub Action](https://github.com/features/actions) runs tests, builds the apps, runs migrations, then deploys to

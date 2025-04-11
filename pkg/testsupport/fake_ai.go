@@ -18,7 +18,7 @@ func (f FakeAi) Options() ai.LLMOptions {
 	}
 }
 
-func (f FakeAi) CreateEmbedding(_ context.Context, _ string) ([]float32, error) {
+func (f FakeAi) CreateEmbedding(_ context.Context, _ string) ([]float64, error) {
 	if f.EmbeddingError != nil {
 		return nil, f.EmbeddingError
 	}

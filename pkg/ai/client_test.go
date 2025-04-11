@@ -18,7 +18,7 @@ func TestClient_CreateEmbedding(t *testing.T) {
 	result, err := client.CreateEmbedding(context.Background(), "some text")
 
 	assert.NoError(t, err)
-	assert.Equal(t, []float32{1, 2, 3, 4}, result)
+	assert.Equal(t, []float64{1, 2, 3, 4}, result)
 }
 
 func TestClient_GetChatCompletion(t *testing.T) {
@@ -33,14 +33,18 @@ func TestClient_GetChatCompletion(t *testing.T) {
 	assert.Equal(t, "Sounds good", <-completion)
 }
 
+type TestResponse struct {
+	Some string `json:"some" jsonschema_description:"A response"`
+}
+
 func TestClient_GetJsonChatCompletion(t *testing.T) {
 	endpoint := testsupport.StartTestServer(t, func(mux *http.ServeMux) {
 		testsupport.HandleGetCompletion(mux, `{\"some\": \"json\"}`)
 	})
 
 	client := testsupport.NewTestAiClient(endpoint)
-	completion, err := client.GetJsonChatCompletion(context.Background(), []ai.ChatMessage{}, "someName", "a description", "{}")
+	completion, err := ai.GetJsonChatCompletion[TestResponse](context.Background(), client, []ai.ChatMessage{}, "someName", "a description")
 
 	assert.NoError(t, err)
-	assert.Equal(t, `{"some": "json"}`, completion)
+	assert.Equal(t, TestResponse{Some: "json"}, completion)
 }

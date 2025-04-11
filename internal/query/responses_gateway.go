@@ -26,7 +26,7 @@ func NewResponsesGateway(db *sql.DB) *ResponsesGateway {
 	return &ResponsesGateway{db: db}
 }
 
-func (g *ResponsesGateway) Create(systemPrompt, userQuery, source, response, chatModel, embeddingsModel string, temperature float32) (ResponseRecord, error) {
+func (g *ResponsesGateway) Create(systemPrompt, userQuery, source, response, chatModel, embeddingsModel string, temperature float64) (ResponseRecord, error) {
 	return dbsupport.QueryOne(
 		g.db,
 		`insert into query_responses (system_prompt, user_query, source, response, chat_model, embeddings_model, temperature)

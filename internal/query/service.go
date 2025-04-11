@@ -75,5 +75,5 @@ type Result struct {
 type aiClient interface {
 	Options() ai.LLMOptions
 	GetChatCompletion(ctx context.Context, messages []ai.ChatMessage) (chan string, error)
-	CreateEmbedding(ctx context.Context, text string) ([]float32, error)
+	CreateEmbedding(ctx context.Context, text string) ([]float64, error)
 }

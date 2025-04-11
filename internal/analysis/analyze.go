@@ -63,5 +63,5 @@ func (a *Analyzer) Analyze(ctx context.Context) error {
 }
 
 type embeddingCreator interface {
-	CreateEmbedding(ctx context.Context, text string) ([]float32, error)
+	CreateEmbedding(ctx context.Context, text string) ([]float64, error)
 }
