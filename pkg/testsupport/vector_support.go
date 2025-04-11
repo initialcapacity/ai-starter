@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/initialcapacity/ai-starter/pkg/slicesupport"
 	"github.com/pgvector/pgvector-go"
-	"golang.org/x/exp/constraints"
 	"strings"
 )
 
@@ -19,7 +18,7 @@ func CreatePgVector(oneIndex int) pgvector.Vector {
 }
 
 type Number interface {
-	constraints.Integer | constraints.Float
+	~int | ~int8 | ~int16 | ~int32 | ~int64 | ~float32 | ~float64
 }
 
 func VectorToString[T Number](vector []T) string {
