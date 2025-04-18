@@ -99,6 +99,11 @@ context for a query to the [OpenAI Chat Completion API](https://platform.openai.
     DATABASE_URL="user=starter password=starter database=starter_test host=localhost" go run ./cmd/migrate
     ```
 
+1.  Run tests
+    ```shell
+    go test ./...
+    ```
+
 1.  Copy the example environment file and fill in the necessary values.
     ```shell
     cp .env.example .env 
