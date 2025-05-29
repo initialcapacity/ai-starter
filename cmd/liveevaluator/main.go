@@ -17,7 +17,7 @@ func main() {
 	db := dbsupport.CreateConnection(databaseUrl)
 	responsesGateway := query.NewResponsesGateway(db)
 	scoresGateway := scores.NewGateway(db)
-	options := ai.LLMOptions{ChatModel: "gpt-4o-mini", EmbeddingsModel: "text-embedding-3-large", Temperature: 1}
+	options := ai.LLMOptions{ChatModel: "gpt-4.1-mini", EmbeddingsModel: "text-embedding-3-large", Temperature: 1}
 	aiClient := ai.NewClient(openAiKey, "https://api.openai.com/v1", options)
 	aiScorer := scores.NewAiScorer(aiClient)
 
