@@ -25,10 +25,13 @@ func NewServer(handlers Handlers) *Server {
 	}
 }
 
-func (s *Server) Start(host string, port int) (listenerPort int, done chan error) {
+func (s *Server) Start(host string, port int) (int, chan error) {
+	var listenerPort int
+	done := make(chan error)
+
 	listen, err := net.Listen("tcp", fmt.Sprintf("%s:%d", host, port))
 	if err != nil {
-		done <- err
+		go func() { done <- err }()
 		return 0, done
 	}
 
