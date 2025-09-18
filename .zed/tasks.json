@@ -1,0 +1,18 @@
+[
+  {
+    "label": "go test - current file",
+    "command": "go test -v -run . $ZED_FILE"
+  },
+  {
+    "label": "go test - current function",
+    "command": "go test ./$ZED_RELATIVE_DIR -v -run $ZED_SYMBOL/"
+  },
+  {
+    "label": "go test - current package",
+    "command": "go test ./$ZED_RELATIVE_DIR -v"
+  },
+  {
+    "label": "go test - all",
+    "command": "go test ./..."
+  }
+]
