@@ -17,7 +17,7 @@ func main() {
 	db := dbsupport.CreateConnection(databaseUrl)
 	chunksGateway := collection.NewChunksGateway(db)
 	embeddingsGateway := analysis.NewEmbeddingsGateway(db)
-	options := ai.LLMOptions{ChatModel: "gpt-4.1-mini", EmbeddingsModel: "text-embedding-3-large", Temperature: 1}
+	options := ai.LLMOptions{ChatModel: "gpt-5-mini", EmbeddingsModel: "text-embedding-3-large", Temperature: 1}
 	aiClient := ai.NewClient(openAiKey, "https://api.openai.com/v1", options)
 	runsGateway := analysis.NewRunsGateway(db)
 
