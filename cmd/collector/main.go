@@ -23,7 +23,7 @@ func main() {
 	parser := feedsupport.NewParser(client)
 	extractor := feedsupport.NewExtractor(client)
 	dataGateway := collection.NewDataGateway(db)
-	t := ai.NewTokenizer(tokenizer.Cl100kBase)
+	t := ai.NewTokenizer(tokenizer.GPT5Mini)
 	chunksGateway := collection.NewChunksGateway(db)
 	chunker := ai.NewChunker(t, 6000)
 	chunksService := collection.NewChunksService(chunker, chunksGateway)

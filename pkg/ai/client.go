@@ -5,14 +5,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/invopop/jsonschema"
-	"github.com/openai/openai-go"
-	"github.com/openai/openai-go/option"
-	"github.com/openai/openai-go/packages/param"
-	"github.com/openai/openai-go/shared"
 	"log/slog"
 	"reflect"
 	"time"
+
+	"github.com/invopop/jsonschema"
+	"github.com/openai/openai-go/v2"
+	"github.com/openai/openai-go/v2/option"
+	"github.com/openai/openai-go/v2/packages/param"
+	"github.com/openai/openai-go/v2/shared"
 )
 
 type LLMOptions struct {
@@ -149,11 +150,12 @@ func toOpenAiMessages(messages []ChatMessage) []openai.ChatCompletionMessagePara
 	var result []openai.ChatCompletionMessageParamUnion
 
 	for _, message := range messages {
-		if message.Role == User {
+		switch message.Role {
+		case User:
 			result = append(result, openai.UserMessage(message.Content))
-		} else if message.Role == Assistant {
+		case Assistant:
 			result = append(result, openai.AssistantMessage(message.Content))
-		} else if message.Role == System {
+		case System:
 			result = append(result, openai.SystemMessage(message.Content))
 		}
 	}

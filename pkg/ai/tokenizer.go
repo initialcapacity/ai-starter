@@ -10,8 +10,8 @@ type Tokenizer struct {
 	encoder tokenizer.Codec
 }
 
-func NewTokenizer(encoding tokenizer.Encoding) *Tokenizer {
-	encoder, err := tokenizer.Get(encoding)
+func NewTokenizer(model tokenizer.Model) *Tokenizer {
+	encoder, err := tokenizer.ForModel(model)
 	if err != nil {
 		log.Fatal(fmt.Errorf("unable to create tokenizer: %w", err))
 	}

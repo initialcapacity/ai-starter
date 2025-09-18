@@ -8,13 +8,13 @@ import (
 )
 
 func TestChunker_Split(t *testing.T) {
-	token := ai.NewTokenizer(tokenizer.Cl100kBase)
-	chunker := ai.NewChunker(token, 30)
+	token := ai.NewTokenizer(tokenizer.GPT5Mini)
+	chunker := ai.NewChunker(token, 29)
 
-	result := chunker.Split("I think that this string should have 31 tokens, but it's hard to say for sure. We'll have to count them manually, I guess.")
+	result := chunker.Split("I think that this string should have 30 tokens, but it's hard to say for sure. We'll have to count them manually, I guess.")
 
 	assert.Equal(t, []string{
-		"I think that this string should have 31 tokens, but it's hard ",
-		"d to say for sure. We'll have to count them manually, I guess.",
+		"I think that this string should have 30 tokens, but it's hard",
+		" to say for sure. We'll have to count them manually, I guess.",
 	}, result)
 }
